@@ -10,6 +10,7 @@ app.use(cors());
 app.use(morgan("dev"));
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
+app.use('/uploads',express.static('uploads'))
 
 const BookRoute=require('./routes/book')
 
