@@ -37,8 +37,8 @@ const store = (req, res, next) => {
     summary: req.body.summary,
     price: req.body.price,
   });
-  if (req.file){
-    book.pdf=req.file.path
+  if (req.file) {
+    book.pdf = req.file.path;
   }
   book
     .save()
