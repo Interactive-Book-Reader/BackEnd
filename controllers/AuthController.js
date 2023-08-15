@@ -21,7 +21,7 @@ const register = (req, res, next) => {
     publisher
       .save()
       .then((publisher) => {
-        req.json({
+        res.json({
           message: "Publisher is added successfully.",
         });
       })
