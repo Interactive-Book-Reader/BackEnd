@@ -13,6 +13,7 @@ app.use(bodyparser.json());
 app.use('/uploads',express.static('uploads'))
 
 const BookRoute=require('./routes/book')
+const AuthRoute=require('./routes/auth')
 
 mongoose.connect(
   "mongodb+srv://Group3_SEP:TdxB2XR8PVZKJfvs@interactivebookreader.uscktdx.mongodb.net/Interactive_Book_Reader?retryWrites=true&w=majority",
@@ -40,3 +41,4 @@ app.listen(PORT, () => {
 });
 
 app.use('/api/book',BookRoute)
+app.use('/api/publisher',AuthRoute)
