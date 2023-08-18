@@ -36,10 +36,10 @@ const store = (req, res, next) => {
     genre: req.body.genre,
     summary: req.body.summary,
     price: req.body.price,
+    pdf: req.body.pdf,
+    coverpage: req.body.coverpage
   });
-  if (req.file) {
-    book.pdf = req.file.path;
-  }
+ 
   book
     .save()
     .then((response) => [

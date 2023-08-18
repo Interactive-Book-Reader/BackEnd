@@ -20,6 +20,9 @@ const bookSchema = new Schema(
     },
     pdf: {
       type: String,
+    },
+    coverpage:{
+      type: String
     }
   },
   { timestamps: true }
