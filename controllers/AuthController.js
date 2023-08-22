@@ -124,9 +124,38 @@ const login = (req, res, next) => {
   });
 };
 
+const getPublisher = (req, res, next) => {
+  Publisher.findOne({ username: req.body.username })
+  .then((publisher) => {
+    res.json({
+      message: "Publisher data is fetched successfully.",
+      publisher: publisher,
+    });
+  }).catch((error) => {
+    res.json({ 
+      message: "An error is occured.",
+    });
+  });
+};
+
+const deletePublisher = (req, res, next) => {
+  Publisher.findOneAndDelete({ username: req.body.username })
+  .then(() => {
+    res.json({
+      message: "Publisher data is deleted successfully.",
+    });
+  }).catch(() => {
+    res.json({
+      message: "An error is occured.",
+    });
+  });
+};
+
 
 module.exports = {
   register,
   login,
-  update
+  update,
+  getPublisher,
+  deletePublisher
 };
