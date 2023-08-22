@@ -1,0 +1,35 @@
+paths:
+  /api/book/store:
+    post:
+      summary: Add Books
+      description: Add new book to the database
+      tags:
+        - Books
+      requestBody:
+        description: Book object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: String
+                author:
+                  type: String
+                genre:
+                  type: String
+                summary:
+                  type: String
+                price:
+                  type: Number
+                pdf:
+                  type: String
+                coverpage:
+                  type: String
+                ISBN:
+                  type: String
+      responses:
+        "200":
+          description: Success
+        "500":
+          description: Error
