@@ -24,6 +24,9 @@ const publisherSchema = new Schema(
     year_stabilized: {
       type: Number,
     },
+    logo:{
+      type: String,
+    }
   },
   { timestamps: true }
 );

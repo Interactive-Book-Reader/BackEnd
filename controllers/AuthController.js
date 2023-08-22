@@ -20,7 +20,7 @@ const register = (req, res, next) => {
     });
     publisher
       .save()
-      .then((publisher) => {
+      .then(() => {
         res.json({
           message: "Publisher is added successfully.",
         });
@@ -33,12 +33,67 @@ const register = (req, res, next) => {
   });
 };
 
+const update = (req, res, next) => {
+  if (req.body.password!==undefined){
+    bcrypt.hash(req.body.password, 10, function (err, hashedPass) {
+      if (err) {
+        res.json({
+          error: err,
+        });
+      }
+      Publisher
+        .findOneAndUpdate({ username: req.body.username }, { $set: {
+          name: req.body.name,
+          email: req.body.email,
+          phonenumber: req.body.phonenumber,
+          username: req.body.username,
+          bio_data: req.body.bio_data,
+          password: hashedPass,
+          year_stabilized: req.body.year_stabilized,
+          logo: req.body.logo,
+        }})
+        .then(() => {
+          res.json({
+            message: "Publisher data is updated successfully.",
+          });
+        })
+        .catch((error) => {
+          res.json({
+            message: "An error is occured.",
+          });
+        });
+    });
+  }else{
+    Publisher
+        .findOneAndUpdate({ username: req.body.username }, { $set: {
+          name: req.body.name,
+          email: req.body.email,
+          phonenumber: req.body.phonenumber,
+          username: req.body.username,
+          bio_data: req.body.bio_data,
+          year_stabilized: req.body.year_stabilized,
+          logo: req.body.logo,
+        }})
+        .then(() => {
+          res.json({
+            message: "Publisher data is updated successfully.",
+          });
+        })
+        .catch((error) => {
+          res.json({
+            message: "An error is occured.",
+          });
+        });
+    };     
+};
+
 const login = (req, res, next) => {
   let username = req.body.username;
   let password = req.body.password;
+  let email = req.body.email;
 
   Publisher.findOne({
-    $or: [{ email: username }, { username: username }],
+    $or: [{ email: email }, { username: username }],
   }).then((publisher) => {
     if (publisher) {
       bcrypt.compare(password, publisher.password, function (err, result) {
@@ -69,7 +124,9 @@ const login = (req, res, next) => {
   });
 };
 
+
 module.exports = {
   register,
   login,
+  update
 };
