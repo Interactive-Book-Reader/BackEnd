@@ -17,7 +17,7 @@ const index = (req, res, next) => {
 
 const show = (req, res, next) => {
   let bookID = req.body.ISBN;
-  Book.findOne({"ISBN":bookID})
+  Book.findOne({ "ISBN": bookID })
     .then((response) => {
       res.json([response]);
     })
@@ -31,16 +31,16 @@ const show = (req, res, next) => {
 const store = (req, res, next) => {
   console.log(req.body);
   let book = new Book({
-    title: req.body.Title,
+    title: req.body.title,
     author: req.body.author,
     genre: req.body.genre,
     summary: req.body.summary,
     price: req.body.price,
     pdf: req.body.pdf,
     coverpage: req.body.coverpage,
-    ISBN: req.body.ISBN
+    ISBN: req.body.ISBN,
   });
- 
+
   book
     .save()
     .then((response) => [
@@ -59,7 +59,7 @@ const update = (req, res, next) => {
   let bookID = req.body.ISBN;
 
   let updateData = {
-    title: req.body.Title,
+    title: req.body.title,
     author: req.body.author,
     genre: req.body.genre,
     summary: req.body.summary,
@@ -68,7 +68,7 @@ const update = (req, res, next) => {
     coverpage: req.body.coverpage,
   };
 
-  Book.findByIdAndUpdate(bookID, { $set: updateData })
+  Book.findOneAndUpdate({ "ISBN":bookID }, { $set: updateData })
     .then(() => {
       res.json({
         message: "Book is updated successfully",
@@ -83,40 +83,41 @@ const update = (req, res, next) => {
 
 const destroy = (req, res, next) => {
   let bookID = req.body.ISBN;
-  Book.findOneAndRemove(bookID)
+  Book.findOneAndRemove({"ISBN":bookID})
     .then(() => {
-      req.json({
+      res.json({
         message: "Book is deleted successfully!",
       });
     })
     .catch((error) => {
-      req.json({
+      res.json({
         message: "An error occured",
       });
     });
 };
 
-const findPriceRangeBook=(req,res,next)=>{
-  let starting_Price=req.body.starting_Price;
-  let ending_Price=req.body.ending_Price;
+const findPriceRangeBook = (req, res, next) => {
+  let starting_Price = req.body.starting_Price;
+  let ending_Price = req.body.ending_Price;
 
   const query = {
     price: {
       $gte: starting_Price,
-      $lte: ending_Price
-    }
+      $lte: ending_Price,
+    },
   };
-  Book.find(query).then((response) => {
-    res.json({
-      response,
+  Book.find(query)
+    .then((response) => {
+      res.json({
+        response,
+      });
+    })
+    .catch((error) => {
+      res.json({
+        message: "An error Occured!",
+      });
     });
-  })
-  .catch((error) => {
-    res.json({
-      message: "An error Occured!",
-    });
-  });
-}
+};
 
 module.exports = {
   index,
@@ -124,5 +125,5 @@ module.exports = {
   store,
   update,
   destroy,
-  findPriceRangeBook
+  findPriceRangeBook,
 };
