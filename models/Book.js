@@ -22,7 +22,10 @@ const bookSchema = new Schema(
       type: String,
     },
     coverpage:{
-      type: String
+      type: String,
+    },
+    ISBN:{
+      type: String,
     }
   },
   { timestamps: true }
