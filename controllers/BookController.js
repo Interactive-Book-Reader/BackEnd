@@ -16,8 +16,8 @@ const index = (req, res, next) => {
 };
 
 const show = (req, res, next) => {
-  let bookID = req.body.bookID;
-  Book.findById(bookID)
+  let bookID = req.body.ISBN;
+  Book.findOne({"ISBN":bookID})
     .then((response) => {
       res.json([response]);
     })
@@ -37,7 +37,8 @@ const store = (req, res, next) => {
     summary: req.body.summary,
     price: req.body.price,
     pdf: req.body.pdf,
-    coverpage: req.body.coverpage
+    coverpage: req.body.coverpage,
+    ISBN: req.body.ISBN
   });
  
   book
@@ -55,7 +56,7 @@ const store = (req, res, next) => {
 };
 
 const update = (req, res, next) => {
-  let bookID = req.body.bookID;
+  let bookID = req.body.ISBN;
 
   let updateData = {
     title: req.body.Title,
@@ -63,6 +64,8 @@ const update = (req, res, next) => {
     genre: req.body.genre,
     summary: req.body.summary,
     price: req.body.price,
+    pdf: req.body.pdf,
+    coverpage: req.body.coverpage,
   };
 
   Book.findByIdAndUpdate(bookID, { $set: updateData })
@@ -79,7 +82,7 @@ const update = (req, res, next) => {
 };
 
 const destroy = (req, res, next) => {
-  let bookID = req.body.bookID;
+  let bookID = req.body.ISBN;
   Book.findOneAndRemove(bookID)
     .then(() => {
       req.json({
@@ -93,10 +96,33 @@ const destroy = (req, res, next) => {
     });
 };
 
+const findPriceRangeBook=(req,res,next)=>{
+  let starting_Price=req.body.starting_Price;
+  let ending_Price=req.body.ending_Price;
+
+  const query = {
+    price: {
+      $gte: starting_Price,
+      $lte: ending_Price
+    }
+  };
+  Book.find(query).then((response) => {
+    res.json({
+      response,
+    });
+  })
+  .catch((error) => {
+    res.json({
+      message: "An error Occured!",
+    });
+  });
+}
+
 module.exports = {
   index,
   show,
   store,
   update,
   destroy,
+  findPriceRangeBook
 };
