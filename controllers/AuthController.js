@@ -115,18 +115,18 @@ const login = (req, res, next) => {
             expiresIn: "1h",
           });
 
-          let expireToken = jwt.sign(
-            { name: publisher.name },
-            "expireverySecretValue",
-            {
-              expiresIn: "48h",
-            }
-          );
+          // let expireToken = jwt.sign(
+          //   { name: publisher.name },
+          //   "expireverySecretValue",
+          //   {
+          //     expiresIn: "48h",
+          //   }
+          // );
 
           res.json({
             message: "Login Successful",
             token,
-            expireToken,
+            // expireToken,
           });
         } else {
           res.json({
@@ -177,20 +177,30 @@ const refreshToken = (req, res, next) => {
     if (err) {
       res.sendStatus(403).json({
         message: "Invalid refresh token",
-      })
+      });
     } else {
-      let token=jwt.sign({name: publisher.name },'thesecrettoken',{expiresIn:'60s'});
-      let refreshToken=req.body.refreshToken;
-      re.status(200).json
-      ({
-        token:token,
-        refreshToken:refreshToken,
-        message:"Token is refreshed"
-      })
+      let token = jwt.sign({ name: publisher.name }, "thesecrettoken", {
+        expiresIn: "60s",
+      });
+      let refreshToken = req.body.refreshToken;
+      re.status(200).json({
+        token: token,
+        refreshToken: refreshToken,
+        message: "Token is refreshed",
+      });
     }
   });
 };
 
+const getDetailsfromToken = (req, res, next) => {
+  const token = req.headers.authorization.split(" ")[1];
+  const decoded = jwt.verify(token, "verySecretValue");
+  console.log(decoded.name);
+  res.json
+  ({
+    name: decoded.name,
+  });
+};
 
 module.exports = {
   register,
@@ -199,4 +209,5 @@ module.exports = {
   getPublisher,
   deletePublisher,
   refreshToken,
+  getDetailsfromToken,
 };
