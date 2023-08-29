@@ -12,15 +12,15 @@ app.use(cors());
 const options = {
   definition: {
     openapi: "3.0.0",
-    info:{
+    info: {
       title: "Interactive Book Reader",
       version: "0.1.0",
       description:
         "This is the project that is being doing as Semester 5 Project.",
-      contact:{
-        name : "H.W.K.Aravinda",
+      contact: {
+        name: "H.W.K.Aravinda",
         email: "aravindahwk@gmail.com",
-      }
+      },
     },
     servers: [
       {
@@ -39,6 +39,7 @@ app.use("/uploads", express.static("uploads"));
 const spacs = swaggerjsdoc(options);
 const BookRoute = require("./routes/book");
 const AuthRoute = require("./routes/auth");
+const UserRoute = require("./routes/user");
 
 mongoose.connect(
   "mongodb+srv://Group3_SEP:TdxB2XR8PVZKJfvs@interactivebookreader.uscktdx.mongodb.net/Interactive_Book_Reader?retryWrites=true&w=majority",
@@ -67,3 +68,4 @@ app.listen(PORT, () => {
 app.use("/api-docs", swaggerui.serve, swaggerui.setup(spacs));
 app.use("/api/book", BookRoute);
 app.use("/api/publisher", AuthRoute);
+app.use("/api/user", UserRoute);

@@ -1,15 +1,12 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const publisherSchema = new Schema(
+const userSchema = new Schema(
   {
     name: {
       type: String,
     },
     email: {
-      type: String,
-    },
-    phonenumber: {
       type: String,
     },
     username: {
@@ -21,15 +18,13 @@ const publisherSchema = new Schema(
     bio_data: {
       type: String,
     },
-    year_stabilized: {
-      type: Number,
-    },
-    logo:{
-      type: String,
+    image_lisk:{
+        type: String,
     }
+   
   },
   { timestamps: true }
 );
 
-const Publisher = mongoose.model("Publisher", publisherSchema);
-module.exports = Publisher;
+const User = mongoose.model("User", userSchema);
+module.exports = User;

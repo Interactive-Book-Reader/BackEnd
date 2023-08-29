@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 
 const BookController = require("../controllers/BookController");
-const upload=require('../middleware/upload')
 
 router.get("/", BookController.index);
 router.post("/show", BookController.show);
