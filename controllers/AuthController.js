@@ -34,24 +34,28 @@ const register = (req, res, next) => {
 };
 
 const update = (req, res, next) => {
-  if (req.body.password!==undefined){
+  if (req.body.password !== undefined) {
     bcrypt.hash(req.body.password, 10, function (err, hashedPass) {
       if (err) {
         res.json({
           error: err,
         });
       }
-      Publisher
-        .findOneAndUpdate({ username: req.body.username }, { $set: {
-          name: req.body.name,
-          email: req.body.email,
-          phonenumber: req.body.phonenumber,
-          username: req.body.username,
-          bio_data: req.body.bio_data,
-          password: hashedPass,
-          year_stabilized: req.body.year_stabilized,
-          logo: req.body.logo,
-        }})
+      Publisher.findOneAndUpdate(
+        { username: req.body.username },
+        {
+          $set: {
+            name: req.body.name,
+            email: req.body.email,
+            phonenumber: req.body.phonenumber,
+            username: req.body.username,
+            bio_data: req.body.bio_data,
+            password: hashedPass,
+            year_stabilized: req.body.year_stabilized,
+            logo: req.body.logo,
+          },
+        }
+      )
         .then(() => {
           res.json({
             message: "Publisher data is updated successfully.",
@@ -63,9 +67,11 @@ const update = (req, res, next) => {
           });
         });
     });
-  }else{
-    Publisher
-        .findOneAndUpdate({ username: req.body.username }, { $set: {
+  } else {
+    Publisher.findOneAndUpdate(
+      { username: req.body.username },
+      {
+        $set: {
           name: req.body.name,
           email: req.body.email,
           phonenumber: req.body.phonenumber,
@@ -73,18 +79,20 @@ const update = (req, res, next) => {
           bio_data: req.body.bio_data,
           year_stabilized: req.body.year_stabilized,
           logo: req.body.logo,
-        }})
-        .then(() => {
-          res.json({
-            message: "Publisher data is updated successfully.",
-          });
-        })
-        .catch((error) => {
-          res.json({
-            message: "An error is occured.",
-          });
+        },
+      }
+    )
+      .then(() => {
+        res.json({
+          message: "Publisher data is updated successfully.",
         });
-    };     
+      })
+      .catch((error) => {
+        res.json({
+          message: "An error is occured.",
+        });
+      });
+  }
 };
 
 const login = (req, res, next) => {
@@ -106,9 +114,19 @@ const login = (req, res, next) => {
           let token = jwt.sign({ name: publisher.name }, "verySecretValue", {
             expiresIn: "1h",
           });
+
+          let expireToken = jwt.sign(
+            { name: publisher.name },
+            "expireverySecretValue",
+            {
+              expiresIn: "48h",
+            }
+          );
+
           res.json({
             message: "Login Successful",
             token,
+            expireToken,
           });
         } else {
           res.json({
@@ -126,28 +144,50 @@ const login = (req, res, next) => {
 
 const getPublisher = (req, res, next) => {
   Publisher.findOne({ username: req.body.username })
-  .then((publisher) => {
-    res.json({
-      message: "Publisher data is fetched successfully.",
-      publisher: publisher,
+    .then((publisher) => {
+      res.json({
+        message: "Publisher data is fetched successfully.",
+        publisher: publisher,
+      });
+    })
+    .catch((error) => {
+      res.json({
+        message: "An error is occured.",
+      });
     });
-  }).catch((error) => {
-    res.json({ 
-      message: "An error is occured.",
-    });
-  });
 };
 
 const deletePublisher = (req, res, next) => {
   Publisher.findOneAndDelete({ username: req.body.username })
-  .then(() => {
-    res.json({
-      message: "Publisher data is deleted successfully.",
+    .then(() => {
+      res.json({
+        message: "Publisher data is deleted successfully.",
+      });
+    })
+    .catch(() => {
+      res.json({
+        message: "An error is occured.",
+      });
     });
-  }).catch(() => {
-    res.json({
-      message: "An error is occured.",
-    });
+};
+
+const refreshToken = (req, res, next) => {
+  const refreshToken = req.body.refreshToken;
+  jwt.verify(refreshToken, "expireverySecretValue", (err, user) => {
+    if (err) {
+      res.sendStatus(403).json({
+        message: "Invalid refresh token",
+      })
+    } else {
+      let token=jwt.sign({name: publisher.name },'thesecrettoken',{expiresIn:'60s'});
+      let refreshToken=req.body.refreshToken;
+      re.status(200).json
+      ({
+        token:token,
+        refreshToken:refreshToken,
+        message:"Token is refreshed"
+      })
+    }
   });
 };
 
@@ -157,5 +197,6 @@ module.exports = {
   login,
   update,
   getPublisher,
-  deletePublisher
+  deletePublisher,
+  refreshToken,
 };
