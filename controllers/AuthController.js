@@ -37,12 +37,12 @@ const update = (req, res, next) => {
   if (req.body.password !== undefined) {
     bcrypt.hash(req.body.password, 10, function (err, hashedPass) {
       if (err) {
-        res.json({
+        return res.status(500).json({
           error: err,
         });
       }
       Publisher.findOneAndUpdate(
-        { username: req.body.username },
+        { _id: req.body._id },
         {
           $set: {
             name: req.body.name,
@@ -56,20 +56,21 @@ const update = (req, res, next) => {
           },
         }
       )
-        .then(() => {
+        .then(() => {       
           res.json({
             message: "Publisher data is updated successfully.",
           });
         })
         .catch((error) => {
-          res.json({
-            message: "An error is occured.",
+          res.status(500).json({
+            message: "An error occurred.",
+            error: error.message, // Include the error message for debugging
           });
         });
     });
   } else {
     Publisher.findOneAndUpdate(
-      { username: req.body.username },
+      { _id: req.body._id },
       {
         $set: {
           name: req.body.name,
@@ -83,13 +84,15 @@ const update = (req, res, next) => {
       }
     )
       .then(() => {
+        console.log("update");
         res.json({
           message: "Publisher data is updated successfully.",
         });
       })
       .catch((error) => {
-        res.json({
-          message: "An error is occured.",
+        res.status(500).json({
+          message: "An error occurred.",
+          error: error.message, // Include the error message for debugging
         });
       });
   }
@@ -111,7 +114,7 @@ const login = (req, res, next) => {
           });
         }
         if (result) {
-          let token = jwt.sign({ name: publisher.name }, "verySecretValue", {
+          let token = jwt.sign({ _id:publisher._id }, "verySecretValue", {
             expiresIn: "1h",
           });
 
@@ -143,7 +146,7 @@ const login = (req, res, next) => {
 };
 
 const getPublisher = (req, res, next) => {
-  Publisher.findOne({ username: req.body.username })
+  Publisher.findOne({ _id: req.body._id })
     .then((publisher) => {
       res.json({
         message: "Publisher data is fetched successfully.",
@@ -158,7 +161,7 @@ const getPublisher = (req, res, next) => {
 };
 
 const deletePublisher = (req, res, next) => {
-  Publisher.findOneAndDelete({ username: req.body.username })
+  Publisher.findOneAndDelete({ _id: req.body._id })
     .then(() => {
       res.json({
         message: "Publisher data is deleted successfully.",
@@ -192,13 +195,13 @@ const refreshToken = (req, res, next) => {
   });
 };
 
-const getDetailsfromToken = (req, res, next) => {
+const getIDfromToken = (req, res, next) => {
   const token = req.headers.authorization.split(" ")[1];
   const decoded = jwt.verify(token, "verySecretValue");
-  console.log(decoded.name);
+  console.log(decoded._id);
   res.json
   ({
-    name: decoded.name,
+    id: decoded._id
   });
 };
 
@@ -209,5 +212,5 @@ module.exports = {
   getPublisher,
   deletePublisher,
   refreshToken,
-  getDetailsfromToken,
+  getIDfromToken
 };

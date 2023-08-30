@@ -6,10 +6,10 @@ const authenticate = require("../middleware/authenticate");
 
 router.post("/register", AuthController.register);
 router.post("/login", AuthController.login);
-router.post("/update", authenticate,AuthController.update);
+router.post("/update", AuthController.update);
 router.post("/getPublisher", AuthController.getPublisher);
 router.post("/deletePublisher", AuthController.deletePublisher);
 router.post("/refreshToken", AuthController.refreshToken);
-router.post("/getDetailsfromToken", AuthController.getDetailsfromToken);
+router.post("/getIDfromToken", AuthController.getIDfromToken);
 
 module.exports = router;
