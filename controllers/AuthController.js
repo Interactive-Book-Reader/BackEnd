@@ -34,7 +34,6 @@ const register = (req, res, next) => {
 };
 
 const update = (req, res, next) => {
-  console.log(req.body._id);
   if (req.body.password !== undefined) {
     bcrypt.hash(req.body.password, 10, function (err, hashedPass) {
       if (err) {
@@ -57,8 +56,7 @@ const update = (req, res, next) => {
           },
         }
       )
-        .then(() => {
-       
+        .then(() => {       
           res.json({
             message: "Publisher data is updated successfully.",
           });
@@ -71,7 +69,6 @@ const update = (req, res, next) => {
         });
     });
   } else {
-    console.log("no password");
     Publisher.findOneAndUpdate(
       { _id: req.body._id },
       {

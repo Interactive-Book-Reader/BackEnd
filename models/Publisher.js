@@ -22,7 +22,7 @@ const publisherSchema = new Schema(
       type: String,
     },
     year_stabilized: {
-      type: String,
+      type: Number,
     },
     logo:{
       type: String,
