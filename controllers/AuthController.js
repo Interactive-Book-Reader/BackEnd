@@ -34,15 +34,16 @@ const register = (req, res, next) => {
 };
 
 const update = (req, res, next) => {
+  console.log(req.body._id);
   if (req.body.password !== undefined) {
     bcrypt.hash(req.body.password, 10, function (err, hashedPass) {
       if (err) {
-        res.json({
+        return res.status(500).json({
           error: err,
         });
       }
       Publisher.findOneAndUpdate(
-        { _id: req.body._id},
+        { _id: req.body._id },
         {
           $set: {
             name: req.body.name,
@@ -57,19 +58,22 @@ const update = (req, res, next) => {
         }
       )
         .then(() => {
+       
           res.json({
             message: "Publisher data is updated successfully.",
           });
         })
         .catch((error) => {
-          res.json({
-            message: "An error is occured.",
+          res.status(500).json({
+            message: "An error occurred.",
+            error: error.message, // Include the error message for debugging
           });
         });
     });
   } else {
+    console.log("no password");
     Publisher.findOneAndUpdate(
-      { username: req.body.username },
+      { _id: req.body._id },
       {
         $set: {
           name: req.body.name,
@@ -83,13 +87,15 @@ const update = (req, res, next) => {
       }
     )
       .then(() => {
+        console.log("update");
         res.json({
           message: "Publisher data is updated successfully.",
         });
       })
       .catch((error) => {
-        res.json({
-          message: "An error is occured.",
+        res.status(500).json({
+          message: "An error occurred.",
+          error: error.message, // Include the error message for debugging
         });
       });
   }
