@@ -10,6 +10,6 @@ router.post("/update", authenticate,AuthController.update);
 router.post("/getPublisher", AuthController.getPublisher);
 router.post("/deletePublisher", AuthController.deletePublisher);
 router.post("/refreshToken", AuthController.refreshToken);
-router.post("/getDetailsfromToken", AuthController.getDetailsfromToken);
+router.post("/getIDfromToken", AuthController.getIDfromToken);
 
 module.exports = router;

@@ -42,7 +42,7 @@ const update = (req, res, next) => {
         });
       }
       Publisher.findOneAndUpdate(
-        { username: req.body.username },
+        { _id: req.body._id},
         {
           $set: {
             name: req.body.name,
@@ -111,7 +111,7 @@ const login = (req, res, next) => {
           });
         }
         if (result) {
-          let token = jwt.sign({ name: publisher.name }, "verySecretValue", {
+          let token = jwt.sign({ _id:publisher._id }, "verySecretValue", {
             expiresIn: "1h",
           });
 
@@ -143,7 +143,7 @@ const login = (req, res, next) => {
 };
 
 const getPublisher = (req, res, next) => {
-  Publisher.findOne({ username: req.body.username })
+  Publisher.findOne({ _id: req.body._id })
     .then((publisher) => {
       res.json({
         message: "Publisher data is fetched successfully.",
@@ -158,7 +158,7 @@ const getPublisher = (req, res, next) => {
 };
 
 const deletePublisher = (req, res, next) => {
-  Publisher.findOneAndDelete({ username: req.body.username })
+  Publisher.findOneAndDelete({ _id: req.body._id })
     .then(() => {
       res.json({
         message: "Publisher data is deleted successfully.",
@@ -192,13 +192,13 @@ const refreshToken = (req, res, next) => {
   });
 };
 
-const getDetailsfromToken = (req, res, next) => {
+const getIDfromToken = (req, res, next) => {
   const token = req.headers.authorization.split(" ")[1];
   const decoded = jwt.verify(token, "verySecretValue");
-  console.log(decoded.name);
+  console.log(decoded._id);
   res.json
   ({
-    name: decoded.name,
+    id: decoded._id
   });
 };
 
@@ -209,5 +209,5 @@ module.exports = {
   getPublisher,
   deletePublisher,
   refreshToken,
-  getDetailsfromToken,
+  getIDfromToken
 };
