@@ -29,7 +29,6 @@ const show = (req, res, next) => {
 };
 
 const store = (req, res, next) => {
-  console.log(req.body);
   let book = new Book({
     title: req.body.title,
     author: req.body.author,
@@ -39,6 +38,7 @@ const store = (req, res, next) => {
     pdf: req.body.pdf,
     coverpage: req.body.coverpage,
     ISBN: req.body.ISBN,
+    publisher_id: req.body.publisher_id,
   });
 
   book
@@ -119,6 +119,22 @@ const findPriceRangeBook = (req, res, next) => {
     });
 };
 
+const findBookByPublisher= (req, res, next) => {
+  let publisher_id = req.body.publisher_id;
+  Book.find({ "publisher_id": publisher_id })
+    .then((response) => {
+      res.json({
+        response,
+      });
+    })
+    .catch((error) => {
+      res.json({
+        message: "An error Occured!",
+      });
+    });
+};
+
+
 module.exports = {
   index,
   show,
@@ -126,4 +142,5 @@ module.exports = {
   update,
   destroy,
   findPriceRangeBook,
+  findBookByPublisher,
 };

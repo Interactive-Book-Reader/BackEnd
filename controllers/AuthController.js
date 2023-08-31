@@ -115,7 +115,7 @@ const login = (req, res, next) => {
         }
         if (result) {
           let token = jwt.sign({ _id:publisher._id }, "verySecretValue", {
-            expiresIn: "1h",
+            expiresIn: "2h",
           });
 
           // let expireToken = jwt.sign(
