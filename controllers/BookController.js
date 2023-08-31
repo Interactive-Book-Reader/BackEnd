@@ -16,10 +16,10 @@ const index = (req, res, next) => {
 };
 
 const show = (req, res, next) => {
-  let bookID = req.body.ISBN;
-  Book.findOne({ "ISBN": bookID })
+  let id= req.body.id;
+  Book.findOne({ "_id": id })
     .then((response) => {
-      res.json([response]);
+      res.json(response);
     })
     .catch((error) => [
       res.json({
@@ -133,6 +133,8 @@ const findBookByPublisher= (req, res, next) => {
       });
     });
 };
+
+
 
 
 module.exports = {
