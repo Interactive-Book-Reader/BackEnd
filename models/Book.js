@@ -26,7 +26,10 @@ const bookSchema = new Schema(
     },
     ISBN:{
       type: String,
-    }
+    },
+    publisher_id:{
+      type: String,
+    },
   },
   { timestamps: true }
 );

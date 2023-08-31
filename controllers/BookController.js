@@ -39,6 +39,7 @@ const store = (req, res, next) => {
     pdf: req.body.pdf,
     coverpage: req.body.coverpage,
     ISBN: req.body.ISBN,
+    publisher_id: req.body.publisher_id,
   });
 
   book
