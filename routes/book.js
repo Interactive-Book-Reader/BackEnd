@@ -9,5 +9,6 @@ router.post("/store", BookController.store);
 router.post("/update", BookController.update);
 router.post("/delete", BookController.destroy);
 router.post("/pricebook", BookController.findPriceRangeBook);
+router.post("/publisherbook", BookController.findBookByPublisher);
 
 module.exports = router;
