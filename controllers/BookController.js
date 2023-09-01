@@ -56,7 +56,8 @@ const store = (req, res, next) => {
 };
 
 const update = (req, res, next) => {
-  let bookID = req.body.ISBN;
+  console.log(req.body.coverpage);
+  let id = req.body.id;
 
   let updateData = {
     title: req.body.title,
@@ -68,7 +69,7 @@ const update = (req, res, next) => {
     coverpage: req.body.coverpage,
   };
 
-  Book.findOneAndUpdate({ "ISBN":bookID }, { $set: updateData })
+  Book.findOneAndUpdate({ "_id":id }, { $set: updateData })
     .then(() => {
       res.json({
         message: "Book is updated successfully",
@@ -82,8 +83,8 @@ const update = (req, res, next) => {
 };
 
 const destroy = (req, res, next) => {
-  let bookID = req.body.ISBN;
-  Book.findOneAndRemove({"ISBN":bookID})
+  let id = req.body.id;
+  Book.findOneAndRemove({"_id":id})
     .then(() => {
       res.json({
         message: "Book is deleted successfully!",
