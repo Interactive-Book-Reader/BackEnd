@@ -83,8 +83,8 @@ const update = (req, res, next) => {
 };
 
 const destroy = (req, res, next) => {
-  let bookID = req.body.ISBN;
-  Book.findOneAndRemove({"ISBN":bookID})
+  let id = req.body.id;
+  Book.findOneAndRemove({"_id":id})
     .then(() => {
       res.json({
         message: "Book is deleted successfully!",
