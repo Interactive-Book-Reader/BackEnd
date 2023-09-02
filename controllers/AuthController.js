@@ -1,6 +1,17 @@
 const Publisher = require("../models/Publisher");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const nodemailer = require('nodemailer');
+require("dotenv").config();
+const PublisherOTPVerification = require("../models/PublisherOTPVerification");
+
+let transporter=nodemailer.createTransport({
+  service: 'gmail',
+  auth:{
+    user: process.env.AUTH_EMAIL,
+    pass: process.env.AUTH_PASSWORD
+  }
+});
 
 const register = (req, res, next) => {
   bcrypt.hash(req.body.password, 10, function (err, hashedPass) {
@@ -20,10 +31,12 @@ const register = (req, res, next) => {
     });
     publisher
       .save()
-      .then(() => {
-        res.json({
-          message: "Publisher is added successfully.",
-        });
+      .then((result) => {
+        console.log("success")
+        sendOTPVerification(result,res);
+        // res.json({
+        //   message: "Publisher is added successfully.",
+        // });
       })
       .catch((error) => {
         res.json({
@@ -205,6 +218,52 @@ const getIDfromToken = (req, res, next) => {
   });
 };
 
+const sendOTPVerification = async({_id,email},res) => {
+  console.log(_id,email)
+  try{
+    const otp = Math.floor(100000 + Math.random() * 900000);
+    console.log(otp);
+    console.log(process.env.AUTH_EMAIL);
+
+    const mailOptions = {
+      from: process.env.AUTH_EMAIL,
+      to: email,
+      subject: 'OTP for Email Verification',
+      html: `<h1>OTP for Email Verification is <b>${otp}</b></h1>`
+    };
+
+    const saltRounds = 10;
+    const hashOTP= await bcrypt.hash(toString(otp), saltRounds);
+    const newOTPVerfication =new PublisherOTPVerification({
+      publisherId: _id,
+      otp: hashOTP,
+      createdAt: Date.now(),
+      expiresAt: Date.now() + 5*60*1000
+    });
+
+    await newOTPVerfication.save();
+    await transporter.sendMail(mailOptions);
+    res.json({
+      status: "Pending",
+      message: "OTP is sent successfully.",
+      data:{
+        publisherId: _id,
+        email,
+      }
+    });
+  }
+  catch(err){
+    res.json({
+      status: "Failed",
+      message: "OTP is not sent.",
+      error: err.message
+  });
+
+}
+}
+
+
+
 module.exports = {
   register,
   login,
@@ -212,5 +271,5 @@ module.exports = {
   getPublisher,
   deletePublisher,
   refreshToken,
-  getIDfromToken
+  getIDfromToken,
 };
