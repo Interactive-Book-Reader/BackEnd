@@ -1,16 +1,16 @@
 const Publisher = require("../models/Publisher");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 require("dotenv").config();
 const PublisherOTPVerification = require("../models/PublisherOTPVerification");
 
-let transporter=nodemailer.createTransport({
-  service: 'gmail',
-  auth:{
+let transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
     user: process.env.AUTH_EMAIL,
-    pass: process.env.AUTH_PASSWORD
-  }
+    pass: process.env.AUTH_PASSWORD,
+  },
 });
 
 const register = (req, res, next) => {
@@ -28,12 +28,13 @@ const register = (req, res, next) => {
       password: hashedPass,
       bio_data: req.body.bio_data,
       year_stabilized: req.body.year_stabilized,
+      verified: false,
     });
     publisher
       .save()
       .then((result) => {
-        console.log("success")
-        sendOTPVerification(result,res);
+        console.log("success");
+        sendOTPVerification(result, res);
         // res.json({
         //   message: "Publisher is added successfully.",
         // });
@@ -69,7 +70,7 @@ const update = (req, res, next) => {
           },
         }
       )
-        .then(() => {       
+        .then(() => {
           res.json({
             message: "Publisher data is updated successfully.",
           });
@@ -127,7 +128,7 @@ const login = (req, res, next) => {
           });
         }
         if (result) {
-          let token = jwt.sign({ _id:publisher._id }, "verySecretValue", {
+          let token = jwt.sign({ _id: publisher._id }, "verySecretValue", {
             expiresIn: "2h",
           });
 
@@ -212,15 +213,14 @@ const getIDfromToken = (req, res, next) => {
   const token = req.headers.authorization.split(" ")[1];
   const decoded = jwt.verify(token, "verySecretValue");
   console.log(decoded._id);
-  res.json
-  ({
-    id: decoded._id
+  res.json({
+    id: decoded._id,
   });
 };
 
-const sendOTPVerification = async({_id,email},res) => {
-  console.log(_id,email)
-  try{
+const sendOTPVerification = async ({ _id, email }, res) => {
+  console.log(_id, email);
+  try {
     const otp = Math.floor(100000 + Math.random() * 900000);
     console.log(otp);
     console.log(process.env.AUTH_EMAIL);
@@ -228,7 +228,7 @@ const sendOTPVerification = async({_id,email},res) => {
     const mailOptions = {
       from: process.env.AUTH_EMAIL,
       to: email,
-      subject: 'OTP for Email Verification',
+      subject: "OTP for Email Verification",
       html: `<!DOCTYPE html>
       <html lang="en">
       <head>
@@ -273,16 +273,16 @@ const sendOTPVerification = async({_id,email},res) => {
           </div>
       </body>
       </html>
-      `
+      `,
     };
 
     const saltRounds = 10;
-    const hashOTP= await bcrypt.hash(toString(otp), saltRounds);
-    const newOTPVerfication =new PublisherOTPVerification({
+    const hashOTP = await bcrypt.hash(toString(otp), saltRounds);
+    const newOTPVerfication = new PublisherOTPVerification({
       publisherId: _id,
       otp: hashOTP,
       createdAt: Date.now(),
-      expiresAt: Date.now() + 5*60*1000
+      expiresAt: Date.now() + 5 * 60 * 1000,
     });
 
     await newOTPVerfication.save();
@@ -290,23 +290,65 @@ const sendOTPVerification = async({_id,email},res) => {
     res.json({
       status: "Pending",
       message: "OTP is sent successfully.",
-      data:{
+      data: {
         publisherId: _id,
         email,
-      }
+      },
     });
-  }
-  catch(err){
+  } catch (err) {
     res.json({
       status: "Failed",
       message: "OTP is not sent.",
-      error: err.message
-  });
+      error: err.message,
+    });
+  }
+};
 
-}
-}
+const verifyOTP = async (req, res) => {
+  try {
+    const { publisherId, otp } = req.body;
+    if (!publisherId || !otp) {
+      throw new Error("Invalid OTP");
+    } else {
+      const PublisherOTPVerificationRecords =
+        await PublisherOTPVerification.find({ publisherId });
+      console.log(PublisherOTPVerificationRecords.length);
+      if (PublisherOTPVerificationRecords.length <= 0) {
+        throw new Error(
+          "Account record does not exist or has been verified already. Please sign up or login to continue."
+        );
+      } else {
+        const { expiresAt } = PublisherOTPVerificationRecords[0];
+        const hashOTP = PublisherOTPVerificationRecords[0].otp;
+        console.log(hashOTP);
 
+        if (expiresAt < Date.now()) {
+          await PublisherOTPVerification.deleteMany({ publisherId });
+          throw new Error("OTP has expired. Please sign up again.");
+        } else {
+          const validOTP=await bcrypt.compare(otp,hashOTP);
 
+            if(!validOTP){
+              throw new Error("Invalid code passed.Check your inbox and try again.");
+          }else{
+          await Publisher.updateOne({ _id: publisherId }, { verified: true });
+          await PublisherOTPVerification.deleteMany({ publisherId });
+          res.json({
+            status: "Varified",
+            message: "OTP is verified successfully.",
+          });
+          }
+        }
+      }
+    }
+  } catch (err) {
+    res.json({
+      status: "Failed",
+      message: "OTP is not verified.",
+      error: err.message,
+    });
+  }
+};
 
 module.exports = {
   register,
@@ -316,4 +358,5 @@ module.exports = {
   deletePublisher,
   refreshToken,
   getIDfromToken,
+  verifyOTP,
 };

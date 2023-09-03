@@ -26,7 +26,10 @@ const publisherSchema = new Schema(
     },
     logo:{
       type: String,
-    }
+    },
+    verified: {
+      type: Boolean,
+    },
   },
   { timestamps: true }
 );
