@@ -222,9 +222,6 @@ const sendOTPVerification = async ({ _id, email }, res) => {
   console.log(_id, email);
   try {
     const otp = Math.floor(100000 + Math.random() * 900000);
-    console.log(otp);
-    console.log(process.env.AUTH_EMAIL);
-
     const mailOptions = {
       from: process.env.AUTH_EMAIL,
       to: email,
@@ -312,7 +309,6 @@ const verifyOTP = async (req, res) => {
     } else {
       const PublisherOTPVerificationRecords =
         await PublisherOTPVerification.find({ publisherId });
-      console.log(PublisherOTPVerificationRecords.length);
       if (PublisherOTPVerificationRecords.length <= 0) {
         throw new Error(
           "Account record does not exist or has been verified already. Please sign up or login to continue."
@@ -320,23 +316,25 @@ const verifyOTP = async (req, res) => {
       } else {
         const { expiresAt } = PublisherOTPVerificationRecords[0];
         const hashOTP = PublisherOTPVerificationRecords[0].otp;
-        console.log(hashOTP);
 
         if (expiresAt < Date.now()) {
           await PublisherOTPVerification.deleteMany({ publisherId });
           throw new Error("OTP has expired. Please sign up again.");
         } else {
-          const validOTP=await bcrypt.compare(otp,hashOTP);
+          const validOTP = await bcrypt.compare(toString(otp), hashOTP);
+          console.log(validOTP);
 
-            if(!validOTP){
-              throw new Error("Invalid code passed.Check your inbox and try again.");
-          }else{
-          await Publisher.updateOne({ _id: publisherId }, { verified: true });
-          await PublisherOTPVerification.deleteMany({ publisherId });
-          res.json({
-            status: "Varified",
-            message: "OTP is verified successfully.",
-          });
+          if (!validOTP) {
+            throw new Error(
+              "Invalid code passed.Check your inbox and try again."
+            );
+          } else {
+            await Publisher.updateOne({ _id: publisherId }, { verified: true });
+            await PublisherOTPVerification.deleteMany({ publisherId });
+            res.json({
+              status: "Verified",
+              message: "OTP is verified successfully.",
+            });
           }
         }
       }
