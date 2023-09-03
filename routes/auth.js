@@ -12,5 +12,7 @@ router.post("/getPublisher", AuthController.getPublisher);
 router.post("/deletePublisher", AuthController.deletePublisher);
 router.post("/refreshToken", AuthController.refreshToken);
 router.post("/getIDfromToken", AuthController.getIDfromToken);
+router.post("/verifyOTP", AuthController.verifyOTP);
+router.post("/resendOTP", AuthController.resendOTP);
 
 module.exports = router;
