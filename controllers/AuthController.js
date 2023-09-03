@@ -269,12 +269,14 @@ const sendOTPVerification = async ({ _id, email }, res) => {
       <body>
           <div class="container">
               <h1>Email Verification</h1>
-              <p>Thank you for signing up. To complete your registration, please enter the OTP below:</p>
+              <p>Thank you for signing up for our Interactive Book Reader!</p>
+              <p>To complete your registration and start enjoying a world of interactive books, please enter the OTP below:</p>
               <p>Your OTP for Email Verification is: <span class="otp">${otp}</span></p>
               <p>If you did not request this OTP, please ignore this email.</p>
           </div>
       </body>
       </html>
+      
       `,
     };
 
