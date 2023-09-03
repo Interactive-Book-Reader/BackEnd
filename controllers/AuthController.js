@@ -348,6 +348,25 @@ const verifyOTP = async (req, res) => {
   }
 };
 
+const resendOTP = async (req, res) => {
+  try {
+    const { publisherId, email } = req.body;
+    if (!publisherId || !email) {
+      throw new Error("Empty user details are not allowed.");
+    } else { 
+      await PublisherOTPVerification.deleteMany({ publisherId });
+      sendOTPVerification({ _id: publisherId, email }, res);
+    }
+  } catch (err) {
+    res.json({
+      status: "Failed",
+      message: "OTP is not sent.",
+      error: err.message,
+    });
+  }
+};
+
+
 module.exports = {
   register,
   login,
@@ -357,4 +376,5 @@ module.exports = {
   refreshToken,
   getIDfromToken,
   verifyOTP,
+  resendOTP,
 };
