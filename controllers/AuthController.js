@@ -139,12 +139,17 @@ const login = (req, res, next) => {
           //     expiresIn: "48h",
           //   }
           // );
-
-          res.json({
-            message: "Login Successful",
-            token,
-            // expireToken,
-          });
+          if (publisher.verified === false) {
+            res.json({
+              message: "Please verify your email address.",
+            });
+          } else if (publisher.verified === true) {
+            res.json({
+              message: "Login Successful",
+              token,
+              // expireToken,
+            });
+          }
         } else {
           res.json({
             message: "Password does not matched!",
@@ -322,7 +327,6 @@ const verifyOTP = async (req, res) => {
           throw new Error("OTP has expired. Please sign up again.");
         } else {
           const validOTP = await bcrypt.compare(toString(otp), hashOTP);
-          console.log(validOTP);
 
           if (!validOTP) {
             throw new Error(
@@ -353,7 +357,7 @@ const resendOTP = async (req, res) => {
     const { publisherId, email } = req.body;
     if (!publisherId || !email) {
       throw new Error("Empty user details are not allowed.");
-    } else { 
+    } else {
       await PublisherOTPVerification.deleteMany({ publisherId });
       sendOTPVerification({ _id: publisherId, email }, res);
     }
@@ -365,7 +369,6 @@ const resendOTP = async (req, res) => {
     });
   }
 };
-
 
 module.exports = {
   register,
