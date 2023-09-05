@@ -18,7 +18,7 @@ const userSchema = new Schema(
     bio_data: {
       type: String,
     },
-    image_lisk:{
+    image_link:{
         type: String,
     }
    

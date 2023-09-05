@@ -93,9 +93,8 @@ const update = (req, res, next) => {
 const login = (req, res, next) => {
   let username = req.body.username;
   let password = req.body.password;
-  let email = req.body.email;
 
-  User.findOne({ $or: [{ email: email }, { username: username }] }).then(
+  User.findOne({ $or: [{ username: username }] }).then(
     (user) => {
       if (user) {
         bcrypt.compare(password, user.password, function (err, result) {
