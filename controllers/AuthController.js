@@ -14,6 +14,12 @@ let transporter = nodemailer.createTransport({
 });
 
 const register = (req, res, next) => {
+  Publisher.findOne({ username: req.body.username }).then((publisher) => {
+    if (publisher) {
+      res.json({
+        message: "Publisher already exists.",
+      });
+    } else {
   bcrypt.hash(req.body.password, 10, function (err, hashedPass) {
     if (err) {
       res.json({
@@ -44,6 +50,8 @@ const register = (req, res, next) => {
           message: "An error is occured.",
         });
       });
+  });
+    }
   });
 };
 
