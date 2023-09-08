@@ -18,6 +18,9 @@ const userSchema = new Schema(
     bio_data: {
       type: String,
     },
+    phonenumber: {
+      type: String,
+    },
     image_link:{
         type: String,
     }

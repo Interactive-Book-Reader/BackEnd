@@ -21,6 +21,7 @@ const register = (req, res, next) => {
           username: req.body.username,
           password: hashedPass,
           bio_data: req.body.bio_data,
+          phonenumber: req.body.phonenumber,
           image_link: req.body.image_link,
         });
         user
@@ -57,6 +58,7 @@ const update = (req, res, next) => {
             username: req.body.username,
             bio_data: req.body.bio_data,
             password: hashedPass,
+            phonenumber: req.body.phonenumber,
             image_link: req.body.image_link,
           },
         }
@@ -81,6 +83,7 @@ const update = (req, res, next) => {
           email: req.body.email,
           username: req.body.username,
           bio_data: req.body.bio_data,
+          phonenumber: req.body.phonenumber,
           image_link: req.body.image_link,
         },
       }
@@ -133,7 +136,7 @@ const login = (req, res, next) => {
 };
 
 const getUser = (req, res, next) => {
-  User.find({ username: req.body.username })
+  User.find({ _id: req.body.id })
     .then((user) => {
       res.json({
         message: "User data is fetched successfully.",
