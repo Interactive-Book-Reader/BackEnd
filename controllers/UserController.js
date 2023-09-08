@@ -50,7 +50,7 @@ const update = (req, res, next) => {
         });
       }
       User.findOneAndUpdate(
-        { username: req.body.username },
+        { _id: req.body.id },
         {
           $set: {
             name: req.body.name,
@@ -76,7 +76,7 @@ const update = (req, res, next) => {
     });
   } else {
     User.findOneAndUpdate(
-      { username: req.body.username },
+      { _id: req.body.id },
       {
         $set: {
           name: req.body.name,
