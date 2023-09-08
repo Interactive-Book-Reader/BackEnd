@@ -40,6 +40,7 @@ const spacs = swaggerjsdoc(options);
 const BookRoute = require("./routes/book");
 const AuthRoute = require("./routes/auth");
 const UserRoute = require("./routes/user");
+const DicRoute = require("./routes/dictionary");
 
 mongoose.connect(
   "mongodb+srv://Group3_SEP:TdxB2XR8PVZKJfvs@interactivebookreader.uscktdx.mongodb.net/Interactive_Book_Reader?retryWrites=true&w=majority",
@@ -69,3 +70,4 @@ app.use("/api-docs", swaggerui.serve, swaggerui.setup(spacs));
 app.use("/api/book", BookRoute);
 app.use("/api/publisher", AuthRoute);
 app.use("/api/user", UserRoute);
+app.use("/api/dictionary", DicRoute);
