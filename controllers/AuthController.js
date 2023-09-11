@@ -232,7 +232,6 @@ const getIDfromToken = (req, res, next) => {
 };
 
 const sendOTPVerification = async ({ _id, email }, res) => {
-  console.log(_id, email);
   try {
     const otp = Math.floor(100000 + Math.random() * 900000);
     const mailOptions = {
@@ -287,9 +286,8 @@ const sendOTPVerification = async ({ _id, email }, res) => {
       
       `,
     };
-
     const saltRounds = 10;
-    const hashOTP = await bcrypt.hash(toString(otp), saltRounds);
+    const hashOTP = await bcrypt.hash(otp.toString(), saltRounds);
     const newOTPVerfication = new PublisherOTPVerification({
       publisherId: _id,
       otp: hashOTP,
@@ -336,7 +334,7 @@ const verifyOTP = async (req, res) => {
           await PublisherOTPVerification.deleteMany({ publisherId });
           throw new Error("OTP has expired. Please sign up again.");
         } else {
-          const validOTP = await bcrypt.compare(toString(otp), hashOTP);
+          const validOTP = await bcrypt.compare(otp, hashOTP);
 
           if (!validOTP) {
             throw new Error(
