@@ -35,14 +35,22 @@ const getdetails = (req, res, next) => {
               title: 1, // Include book details
               ISBN: 1,
               genre: 1,
-              price: 1
+              price: 1,
+              publisher_id: 1
             }
           }
         }
       ]).then((data) => {
+        const result =[];
+        {data.map((item) => {
+            if (item.book_details.publisher_id === req.body.publisher_id){
+                result.push(item);
+            }
+        }
+        )}
         res.json({
-          data: data,
-        });
+            data: result,
+          });
       });
 };
 
