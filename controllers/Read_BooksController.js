@@ -35,6 +35,7 @@ const getdetails = (req, res, next) => {
               title: 1, // Include book details
               ISBN: 1,
               genre: 1,
+              price: 1
             }
           }
         }
