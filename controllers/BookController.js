@@ -16,8 +16,8 @@ const index = (req, res, next) => {
 };
 
 const show = (req, res, next) => {
-  let id= req.body.id;
-  Book.findOne({ "_id": id })
+  let id = req.body.id;
+  Book.findOne({ _id: id })
     .then((response) => {
       res.json(response);
     })
@@ -69,7 +69,7 @@ const update = (req, res, next) => {
     coverpage: req.body.coverpage,
   };
 
-  Book.findOneAndUpdate({ "_id":id }, { $set: updateData })
+  Book.findOneAndUpdate({ _id: id }, { $set: updateData })
     .then(() => {
       res.json({
         message: "Book is updated successfully",
@@ -84,7 +84,7 @@ const update = (req, res, next) => {
 
 const destroy = (req, res, next) => {
   let id = req.body.id;
-  Book.findOneAndRemove({"_id":id})
+  Book.findOneAndRemove({ _id: id })
     .then(() => {
       res.json({
         message: "Book is deleted successfully!",
@@ -120,9 +120,9 @@ const findPriceRangeBook = (req, res, next) => {
     });
 };
 
-const findBookByPublisher= (req, res, next) => {
+const findBookByPublisher = (req, res, next) => {
   let publisher_id = req.body.publisher_id;
-  Book.find({ "publisher_id": publisher_id })
+  Book.find({ publisher_id: publisher_id })
     .then((response) => {
       res.json({
         response,
@@ -135,8 +135,20 @@ const findBookByPublisher= (req, res, next) => {
     });
 };
 
-
-
+const findBookByGenre = (req, res, next) => {
+  let genre = req.body.genre;
+  Book.find({ genre: genre })
+    .then((response) => {
+      res.json({
+        response,
+      });
+    })
+    .catch((error) => {
+      res.json({
+        message: "An error Occured!",
+      });
+    });
+};
 
 module.exports = {
   index,
@@ -146,4 +158,5 @@ module.exports = {
   destroy,
   findPriceRangeBook,
   findBookByPublisher,
+  findBookByGenre,
 };
