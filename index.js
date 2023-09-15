@@ -7,7 +7,6 @@ const swaggerjsdoc = require("swagger-jsdoc");
 const swaggerui = require("swagger-ui-express");
 
 const app = express();
-app.use(cors());
 
 const options = {
   definition: {
@@ -50,7 +49,7 @@ mongoose.connect(uri, {
 });
 
 const db = mongoose.connection;
-
+app.use(cors({ origin: true, credentials: true }));
 db.on("error", (err) => {
   console.log(err);
 });
