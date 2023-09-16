@@ -11,5 +11,6 @@ router.post("/delete", BookController.destroy);
 router.post("/pricebook", BookController.findPriceRangeBook);
 router.post("/publisherbook", BookController.findBookByPublisher);
 router.post("/genrebook", BookController.findBookByGenre);
+router.get("/autherlist", BookController.getAutherList);
 
 module.exports = router;

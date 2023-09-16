@@ -150,6 +150,20 @@ const findBookByGenre = (req, res, next) => {
     });
 };
 
+const getAutherList = (req, res, next) => {
+  Book.distinct("author")
+    .then((response) => {
+      res.json({
+        response,
+      });
+    })
+    .catch((error) => {
+      res.json({
+        message: "An error Occured!",
+      });
+    });
+};
+
 module.exports = {
   index,
   show,
@@ -159,4 +173,5 @@ module.exports = {
   findPriceRangeBook,
   findBookByPublisher,
   findBookByGenre,
+  getAutherList,
 };
