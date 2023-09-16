@@ -7,7 +7,6 @@ const swaggerjsdoc = require("swagger-jsdoc");
 const swaggerui = require("swagger-ui-express");
 
 const app = express();
-app.use(cors());
 
 const options = {
   definition: {
@@ -43,16 +42,14 @@ const UserRoute = require("./routes/user");
 const DicRoute = require("./routes/dictionary");
 const Read_BooksRoute = require("./routes/read_books");
 
-mongoose.connect(
-  "mongodb+srv://Group3_SEP:TdxB2XR8PVZKJfvs@interactivebookreader.uscktdx.mongodb.net/Interactive_Book_Reader?retryWrites=true&w=majority",
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  }
-);
+const uri = process.env.MONGODB_URI;
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 const db = mongoose.connection;
-
+app.use(cors({ origin: true, credentials: true }));
 db.on("error", (err) => {
   console.log(err);
 });
