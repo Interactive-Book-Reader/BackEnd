@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
+/* The code is importing the `BookController` module from the "../controllers/BookController" file and
+assigning it to the `BookController` constant. */
 const BookController = require("../controllers/BookController");
 
 router.get("/", BookController.index);

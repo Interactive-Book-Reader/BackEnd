@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
+/* This code is creating a router object using the Express framework and defining several routes for
+user-related operations. */
 const UserController = require("../controllers/UserController");
 
 router.post("/register", UserController.register);

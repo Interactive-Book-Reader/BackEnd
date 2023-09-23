@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+/* The code is defining a Mongoose schema for a publisher. The schema specifies the structure and data
+types of the publisher object. */
 const publisherSchema = new Schema(
   {
     name: {
