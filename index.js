@@ -1,3 +1,4 @@
+/* This code is importing necessary modules and setting up the Express application. */
 const express = require("express");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
@@ -8,6 +9,8 @@ const swaggerui = require("swagger-ui-express");
 
 const app = express();
 
+/* The `options` object is used to define the configuration for generating the OpenAPI documentation
+using Swagger. */
 const options = {
   definition: {
     openapi: "3.0.0",
@@ -30,11 +33,15 @@ const options = {
   apis: ["./routes/book.js"],
 };
 
+/* The code `app.use(morgan("dev"));` is setting up the Morgan middleware, which is used for logging
+HTTP requests. The "dev" parameter specifies the log format. */
 app.use(morgan("dev"));
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
 app.use("/uploads", express.static("uploads"));
 
+/* The code `const spacs = swaggerjsdoc(options);` is creating a Swagger specification object using the
+options defined earlier. This object will be used to generate the OpenAPI documentation. */
 const spacs = swaggerjsdoc(options);
 const BookRoute = require("./routes/book");
 const AuthRoute = require("./routes/auth");
@@ -47,6 +54,7 @@ mongoose.connect(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+
 
 const db = mongoose.connection;
 app.use(cors({ origin: true, credentials: true }));
@@ -64,6 +72,9 @@ app.listen(PORT, () => {
   console.log(`Server is runing on port ${PORT}`);
 });
 
+/* The code `app.use("/api-docs", swaggerui.serve, swaggerui.setup(spacs));` is setting up a route for
+accessing the Swagger UI documentation. When a user navigates to "/api-docs" in the browser, the
+Swagger UI will be served and displayed. */
 app.use("/api-docs", swaggerui.serve, swaggerui.setup(spacs));
 app.use("/api/book", BookRoute);
 app.use("/api/publisher", AuthRoute);

@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
+/* The code is importing the `AuthController` module from the "../controllers/AuthController" file and
+the `authenticate` middleware from the "../middleware/authenticate" file. */
 const AuthController = require("../controllers/AuthController");
 const authenticate = require("../middleware/authenticate");
 

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+/* The code is defining a Mongoose schema for the "Read_Books" collection in MongoDB. */
 const Read_BooksSchema = new Schema({
     user_id: {
         type: mongoose.Schema.Types.ObjectId,

@@ -13,6 +13,20 @@ let transporter = nodemailer.createTransport({
   },
 });
 
+/**
+ * The `register` function checks if a publisher already exists in the database, and if not, it hashes
+ * the password and saves the publisher's information.
+ * @param req - The `req` parameter is an object that represents the HTTP request made by the client.
+ * It contains information such as the request headers, request body, request method, request URL, and
+ * other relevant details.
+ * @param res - The `res` parameter is the response object that is used to send a response back to the
+ * client. It contains methods and properties that allow you to control the response, such as `json()`
+ * to send a JSON response, `send()` to send a plain text response, and `status()` to
+ * @param next - The `next` parameter is a callback function that is used to pass control to the next
+ * middleware function in the request-response cycle. It is typically used when you want to pass
+ * control to the next middleware function after the current middleware function has completed its
+ * task.
+ */
 const register = (req, res, next) => {
   Publisher.findOne({ username: req.body.username }).then((publisher) => {
     if (publisher) {
@@ -20,41 +34,58 @@ const register = (req, res, next) => {
         message: "Publisher already exists.",
       });
     } else {
-  bcrypt.hash(req.body.password, 10, function (err, hashedPass) {
-    if (err) {
-      res.json({
-        error: err,
-      });
-    }
-    let publisher = new Publisher({
-      name: req.body.name,
-      email: req.body.email,
-      phonenumber: req.body.phonenumber,
-      username: req.body.username,
-      password: hashedPass,
-      bio_data: req.body.bio_data,
-      year_stabilized: req.body.year_stabilized,
-      verified: false,
-    });
-    publisher
-      .save()
-      .then((result) => {
-        console.log("success");
-        sendOTPVerification(result, res);
-        // res.json({
-        //   message: "Publisher is added successfully.",
-        // });
-      })
-      .catch((error) => {
-        res.json({
-          message: "An error is occured.",
+      bcrypt.hash(req.body.password, 10, function (err, hashedPass) {
+        if (err) {
+          res.json({
+            error: err,
+          });
+        }
+        let publisher = new Publisher({
+          name: req.body.name,
+          email: req.body.email,
+          phonenumber: req.body.phonenumber,
+          username: req.body.username,
+          password: hashedPass,
+          bio_data: req.body.bio_data,
+          year_stabilized: req.body.year_stabilized,
+          verified: false,
         });
+        publisher
+          .save()
+          .then((result) => {
+            console.log("success");
+            sendOTPVerification(result, res);
+            // res.json({
+            //   message: "Publisher is added successfully.",
+            // });
+          })
+          .catch((error) => {
+            res.json({
+              message: "An error is occured.",
+            });
+          });
       });
-  });
     }
   });
 };
 
+/**
+ * The function updates a Publisher's data in a database, including hashing the password if provided.
+ * @param req - The `req` parameter represents the HTTP request object, which contains information
+ * about the incoming request such as headers, parameters, body, etc.
+ * @param res - The `res` parameter is the response object that is used to send the response back to
+ * the client. It contains methods and properties that allow you to control the response, such as
+ * setting the status code, sending JSON data, or redirecting the client to another URL.
+ * @param next - The `next` parameter is a callback function that is used to pass control to the next
+ * middleware function in the request-response cycle. It is typically used when you want to pass
+ * control to the next middleware function after the current middleware function has completed its
+ * task.
+ * @returns In this code, if there is an error during the hashing process, the function will return a
+ * JSON response with a status code of 500 and an error message. If the hashing process is successful,
+ * the function will update the Publisher document in the database and return a JSON response with a
+ * message indicating that the update was successful. If there is an error during the update process,
+ * the function will return a
+ */
 const update = (req, res, next) => {
   if (req.body.password !== undefined) {
     bcrypt.hash(req.body.password, 10, function (err, hashedPass) {
@@ -120,6 +151,19 @@ const update = (req, res, next) => {
   }
 };
 
+/**
+ * The login function checks if a publisher exists with the provided username or email, compares the
+ * password with the stored password using bcrypt, and returns a JWT token if the login is successful.
+ * @param req - The `req` parameter is the request object that contains information about the incoming
+ * HTTP request, such as the request headers, request body, and request parameters.
+ * @param res - The `res` parameter is the response object that is used to send the response back to
+ * the client. It contains methods and properties that allow you to control the response, such as
+ * `json()` to send a JSON response, `send()` to send a plain text response, and `status()` to
+ * @param next - The `next` parameter is a callback function that is used to pass control to the next
+ * middleware function in the request-response cycle. It is typically used when you want to pass
+ * control to the next middleware function after the current middleware function has completed its
+ * task.
+ */
 const login = (req, res, next) => {
   let username = req.body.username;
   let password = req.body.password;
@@ -172,6 +216,19 @@ const login = (req, res, next) => {
   });
 };
 
+/**
+ * The function `getPublisher` retrieves a publisher from the database based on the provided ID and
+ * sends a JSON response with the fetched publisher data or an error message.
+ * @param req - The `req` parameter is the request object that contains information about the incoming
+ * HTTP request, such as the request headers, request body, and request parameters.
+ * @param res - The `res` parameter is the response object that is used to send a response back to the
+ * client. It contains methods and properties that allow you to control the response, such as
+ * `res.json()` to send a JSON response, `res.send()` to send a plain text response, and `res
+ * @param next - The `next` parameter is a function that is used to pass control to the next middleware
+ * function in the request-response cycle. It is typically used when there is an error or when the
+ * current middleware function has completed its task and wants to pass control to the next middleware
+ * function.
+ */
 const getPublisher = (req, res, next) => {
   Publisher.findOne({ _id: req.body._id })
     .then((publisher) => {
@@ -187,6 +244,20 @@ const getPublisher = (req, res, next) => {
     });
 };
 
+/**
+ * The deletePublisher function deletes a publisher from the database based on the provided _id and
+ * returns a success or error message.
+ * @param req - The req parameter is the request object, which contains information about the HTTP
+ * request made by the client. It includes properties such as the request method, request headers,
+ * request body, and request parameters.
+ * @param res - The `res` parameter is the response object that is used to send a response back to the
+ * client. It contains methods and properties that allow you to control the response, such as `json()`
+ * to send a JSON response, `send()` to send a plain text response, and `status()` to
+ * @param next - The `next` parameter is a function that is used to pass control to the next middleware
+ * function in the request-response cycle. It is typically used when there is an error or when the
+ * current middleware function has completed its task and wants to pass control to the next middleware
+ * function.
+ */
 const deletePublisher = (req, res, next) => {
   Publisher.findOneAndDelete({ _id: req.body._id })
     .then(() => {
@@ -201,6 +272,19 @@ const deletePublisher = (req, res, next) => {
     });
 };
 
+/**
+ * The function `refreshToken` verifies a refresh token, generates a new access token, and sends it
+ * back along with the refresh token.
+ * @param req - The `req` parameter is the request object that contains information about the incoming
+ * HTTP request, such as the request headers, request body, and request parameters. It is typically
+ * provided by the web framework or server handling the request.
+ * @param res - The `res` parameter is the response object that is used to send the response back to
+ * the client. It contains methods and properties that allow you to control the response, such as
+ * setting the status code, sending JSON data, or redirecting the client to a different URL.
+ * @param next - The `next` parameter is a function that is used to pass control to the next middleware
+ * function in the request-response cycle. It is typically used when you want to pass control to the
+ * next middleware function after completing some operations in the current middleware function.
+ */
 const refreshToken = (req, res, next) => {
   const refreshToken = req.body.refreshToken;
   jwt.verify(refreshToken, "expireverySecretValue", (err, user) => {
@@ -222,6 +306,19 @@ const refreshToken = (req, res, next) => {
   });
 };
 
+/**
+ * The function `getIDfromToken` extracts the user ID from a JWT token and sends it as a response in a
+ * JSON format.
+ * @param req - The `req` parameter is the request object that contains information about the incoming
+ * HTTP request, such as headers, query parameters, and request body. It is an object that is passed to
+ * the function as an argument.
+ * @param res - The `res` parameter is the response object that is used to send a response back to the
+ * client. It contains methods and properties that allow you to control the response, such as
+ * `res.json()` which is used to send a JSON response.
+ * @param next - The `next` parameter is a function that is used to pass control to the next middleware
+ * function in the request-response cycle. It is typically used when you want to pass control to the
+ * next middleware function after performing some operations in the current middleware function.
+ */
 const getIDfromToken = (req, res, next) => {
   const token = req.headers.authorization.split(" ")[1];
   const decoded = jwt.verify(token, "verySecretValue");
@@ -231,6 +328,13 @@ const getIDfromToken = (req, res, next) => {
   });
 };
 
+/**
+ * The function `sendOTPVerification` sends an email with a randomly generated OTP (One-Time Password)
+ * for email verification.
+ * @param res - The `res` parameter is the response object that will be sent back to the client. It is
+ * used to send the response data, such as JSON data or error messages, back to the client making the
+ * request.
+ */
 const sendOTPVerification = async ({ _id, email }, res) => {
   try {
     const otp = Math.floor(100000 + Math.random() * 900000);
@@ -314,6 +418,17 @@ const sendOTPVerification = async ({ _id, email }, res) => {
   }
 };
 
+/**
+ * The function `verifyOTP` is an asynchronous function that verifies an OTP (One-Time Password) for a
+ * publisher and updates their account status accordingly.
+ * @param req - The `req` parameter is the request object that contains information about the HTTP
+ * request made to the server. It includes properties such as the request headers, request body,
+ * request method, request URL, etc. In this code snippet, `req.body` is used to access the request
+ * body, which is
+ * @param res - The `res` parameter is the response object that is used to send the response back to
+ * the client. It contains methods and properties that allow you to control the response, such as
+ * `res.json()` to send a JSON response, `res.status()` to set the HTTP status code, and `res
+ */
 const verifyOTP = async (req, res) => {
   try {
     const { publisherId, otp } = req.body;
@@ -360,6 +475,16 @@ const verifyOTP = async (req, res) => {
   }
 };
 
+/**
+ * The `resendOTP` function is an asynchronous function that takes in a request and response object,
+ * checks if the publisherId and email are provided, deletes any existing OTP verification records for
+ * the publisherId, and then sends a new OTP verification email.
+ * @param req - The `req` parameter is the request object that contains information about the HTTP
+ * request made by the client. It includes properties such as headers, body, query parameters, and
+ * more.
+ * @param res - The `res` parameter is the response object that is used to send the response back to
+ * the client. It is typically an instance of the Express `Response` object.
+ */
 const resendOTP = async (req, res) => {
   try {
     const { publisherId, email } = req.body;
