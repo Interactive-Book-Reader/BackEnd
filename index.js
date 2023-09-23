@@ -8,7 +8,6 @@ const swaggerjsdoc = require("swagger-jsdoc");
 const swaggerui = require("swagger-ui-express");
 
 const app = express();
-app.use(cors());
 
 /* The `options` object is used to define the configuration for generating the OpenAPI documentation
 using Swagger. */
@@ -50,21 +49,15 @@ const UserRoute = require("./routes/user");
 const DicRoute = require("./routes/dictionary");
 const Read_BooksRoute = require("./routes/read_books");
 
-/* The `mongoose.connect()` function is used to establish a connection to a MongoDB database. In this
-code, it is connecting to a MongoDB Atlas cluster with the specified connection string. The
-connection string contains the necessary information to connect to the database, including the
-username, password, and the cluster URL. */
-mongoose.connect(
-  "mongodb+srv://Group3_SEP:TdxB2XR8PVZKJfvs@interactivebookreader.uscktdx.mongodb.net/Interactive_Book_Reader?retryWrites=true&w=majority",
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  }
-);
-/* This code is establishing a connection to a MongoDB database using Mongoose. */
+const uri = process.env.MONGODB_URI;
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
 
 const db = mongoose.connection;
-
+app.use(cors({ origin: true, credentials: true }));
 db.on("error", (err) => {
   console.log(err);
 });
