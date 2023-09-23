@@ -20,37 +20,37 @@ const register = (req, res, next) => {
         message: "Publisher already exists.",
       });
     } else {
-  bcrypt.hash(req.body.password, 10, function (err, hashedPass) {
-    if (err) {
-      res.json({
-        error: err,
-      });
-    }
-    let publisher = new Publisher({
-      name: req.body.name,
-      email: req.body.email,
-      phonenumber: req.body.phonenumber,
-      username: req.body.username,
-      password: hashedPass,
-      bio_data: req.body.bio_data,
-      year_stabilized: req.body.year_stabilized,
-      verified: false,
-    });
-    publisher
-      .save()
-      .then((result) => {
-        console.log("success");
-        sendOTPVerification(result, res);
-        // res.json({
-        //   message: "Publisher is added successfully.",
-        // });
-      })
-      .catch((error) => {
-        res.json({
-          message: "An error is occured.",
+      bcrypt.hash(req.body.password, 10, function (err, hashedPass) {
+        if (err) {
+          res.json({
+            error: err,
+          });
+        }
+        let publisher = new Publisher({
+          name: req.body.name,
+          email: req.body.email,
+          phonenumber: req.body.phonenumber,
+          username: req.body.username,
+          password: hashedPass,
+          bio_data: req.body.bio_data,
+          year_stabilized: req.body.year_stabilized,
+          verified: false,
         });
+        publisher
+          .save()
+          .then((result) => {
+            console.log("success");
+            sendOTPVerification(result, res);
+            // res.json({
+            //   message: "Publisher is added successfully.",
+            // });
+          })
+          .catch((error) => {
+            res.json({
+              message: "An error is occured.",
+            });
+          });
       });
-  });
     }
   });
 };
