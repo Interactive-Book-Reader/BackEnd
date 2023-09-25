@@ -30,5 +30,26 @@ These instructions will help you set up and run the AR Book Reader app.
 1. Clone the AR Book Reader repository.
 
    ```bash
-   git clone https://github.com/your-username/ar-book-reader.git
-   cd ar-book-reader
+   git clone [https://github.com/your-username/ar-book-reader.git](https://github.com/Interactive-Book-Reader/BackEnd.git)https://github.com/Interactive-Book-Reader/BackEnd.git
+   cd Backend
+
+2. Install dependencies.
+   ```bash
+   npm install
+   
+3. Configure environment variables (e.g., database connection, secret keys).
+   ```bash
+   AUTH_EMAIL="email address"
+   AUTH_PASSWORD="password"
+   MONGODB_URI = "mongodb uri"
+   PORT=3001
+   
+4. Start the server.
+   ```bash
+   npm start
+
+## Getting Started
+Launch the AR Book Reader app on your mobile device.
+Select a book from the dashboard.
+Hold your phone over the book to visualize the content using AR.
+
