@@ -276,6 +276,47 @@ const getAutherList = (req, res, next) => {
     });
 };
 
+/**
+ * The function `getBookByAutherGenreAndPrice` takes in a request object with author, genre, starting
+ * price, and ending price parameters, and returns a response object with books that match the given
+ * criteria.
+ * @param req - The `req` parameter is the request object that contains information about the incoming
+ * request, such as the request headers, request body, and request parameters. In this case, it is used
+ * to access the `body` property, which contains the data sent in the request body.
+ * @param res - The `res` parameter is the response object that is used to send the response back to
+ * the client. It contains methods and properties that allow you to control the response, such as
+ * `res.json()` to send a JSON response, `res.send()` to send a plain text response, and `res
+ * @param next - The `next` parameter is a function that is used to pass control to the next middleware
+ * function in the request-response cycle. It is typically used when you want to pass control to the
+ * next middleware function after completing some operations in the current middleware function.
+ */
+const getBookByAutherGenreAndPrice = (req, res, next) => {
+  let author = req.body.author;
+  let genre = req.body.genre;
+  let starting_Price = req.body.starting_Price;
+  let ending_Price = req.body.ending_Price;
+
+  const query = {
+    $and: [
+      { author: author },
+      { genre: genre },
+      { price: { $gte: starting_Price, $lte: ending_Price } },
+    ],
+  };
+
+  Book.find(query)
+    .then((response) => {
+      res.json({
+        response,
+      });
+    })
+    .catch((error) => {
+      res.json({
+        message: "An error Occured!",
+      });
+    });
+};
+
 module.exports = {
   index,
   show,
@@ -286,4 +327,5 @@ module.exports = {
   findBookByPublisher,
   findBookByGenre,
   getAutherList,
+  getBookByAutherGenreAndPrice,
 };
