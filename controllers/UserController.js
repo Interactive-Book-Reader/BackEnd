@@ -153,7 +153,7 @@ const login = (req, res, next) => {
           });
         }
         if (result) {
-          let token = jwt.sign({ name: user.name }, "verySecretValue", {
+          let token = jwt.sign({ _id: user._id }, "verySecretValue", {
             expiresIn: "1h",
           });
           res.json({
