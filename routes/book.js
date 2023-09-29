@@ -14,6 +14,6 @@ router.post("/pricebook", BookController.findPriceRangeBook);
 router.post("/publisherbook", BookController.findBookByPublisher);
 router.post("/genrebook", BookController.findBookByGenre);
 router.get("/autherlist", BookController.getAutherList);
-router.get("/getbookbyauthorgenreandprice", BookController.getBookByAutherGenreAndPrice);
+router.post("/getbookbyauthorgenreandprice", BookController.getBookByAutherGenreAndPrice);
 
 module.exports = router;

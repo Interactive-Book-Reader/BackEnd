@@ -295,7 +295,6 @@ const getBookByAutherGenreAndPrice = (req, res, next) => {
   let genre = req.body.genre;
   let starting_Price = req.body.starting_Price;
   let ending_Price = req.body.ending_Price;
-
   const query = {
     $and: [
       { author: author },
