@@ -30,17 +30,16 @@ let transporter = nodemailer.createTransport({
 const register = (req, res, next) => {
   Publisher.findOne({ username: req.body.username }).then((publisher) => {
     let registering = false;
-    if (publisher){
-      if (publisher.verified===true){
+    if (publisher) {
+      if (publisher.verified === true) {
         res.json({
           message: "Publisher already exists.",
         });
+      } else {
+        registering = true;
       }
-      else{
-        registering=true;
-      }
-    }else{
-      registering=true;      
+    } else {
+      registering = true;
     }
     if (registering) {
       bcrypt.hash(req.body.password, 10, function (err, hashedPass) {
@@ -252,7 +251,6 @@ const getPublisher = (req, res, next) => {
       });
     });
 };
-
 
 /**
  * The deletePublisher function deletes a publisher from the database based on the provided _id and
@@ -517,12 +515,130 @@ const resendOTP = async (req, res) => {
 };
 
 const forgotpassword = async (req, res) => {
-  const {username} =req.body;
-  console.log(username);
-  res.json({
-    message: "Take the username",
-  });
-}
+  const { username } = req.body;
+  try {
+    const oldUser = await Publisher.findOne({ username });
+    if (!oldUser) {
+      return res.status(404).json({ message: "User doesn't exist." });
+    }
+    const JWT_SECRET_KEY =
+      "askfjjkfh98314bjbahsdfhdjfafhssdjkhfkdjhfadjshfjhfdjkfhdf381tfhjsafjsf";
+    const secret_key = JWT_SECRET_KEY + oldUser.password;
+    const token = jwt.sign({ username }, secret_key, { expiresIn: "5m" });
+    const CLIENT_URL = `http://localhost:3000/auth/resetpassword/${oldUser._id}/${token}`;
+    await sendResetPasswordEmail(oldUser.email, CLIENT_URL);
+    console.log(CLIENT_URL);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const resetpassword = async (req, res) => {
+  const {id,token,password} = req.body;
+  const oldUser = await Publisher.findOne({ _id: id });
+  if (!oldUser) {
+    return res.status(404).json({ message: "User doesn't exist." });
+  }
+  const JWT_SECRET_KEY =
+    "askfjjkfh98314bjbahsdfhdjfafhssdjkhfkdjhfadjshfjhfdjkfhdf381tfhjsafjsf";
+  const secret_key = JWT_SECRET_KEY + oldUser.password;
+  try {
+    jwt.verify(token, secret_key);
+    bcrypt.hash(password, 10, function (err, hashedPass) {
+      if (err) {
+        res.json({
+          error: err,
+        });
+      }
+      else{
+        Publisher.findOneAndUpdate(
+          { _id: id },
+          {
+            $set: {
+              password: hashedPass,
+            },
+          }
+        )
+          .then(() => {
+            res.json({
+              message: "Password is updated successfully.",
+            });
+          })
+          .catch((error) => {
+            res.status(500).json({
+              message: "An error occurred.",
+              error: error.message, // Include the error message for debugging
+            });
+          });
+      }
+    }
+    );
+  } catch (err) {
+    res.json({ message: err.message });
+  }
+  // res.send("Done");
+};
+
+const sendResetPasswordEmail = async (email, link) => {
+  const mailOptions = {
+    from: process.env.AUTH_EMAIL,
+    to: email,
+    subject: "Password Reset Request",
+    html: `<!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Password Reset</title>
+          <style>
+              body {
+                  font-family: Arial, sans-serif;
+                  background-color: #f4f4f4;
+                  padding: 20px;
+              }
+              .container {
+                  max-width: 600px;
+                  margin: 0 auto;
+                  background-color: #ffffff;
+                  padding: 20px;
+                  border-radius: 5px;
+                  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+              }
+              h1 {
+                  color: #333;
+              }
+              p {
+                  font-size: 16px;
+                  line-height: 1.5;
+                  color: #666;
+              }
+              .reset-link {
+                  font-size: 16px;
+                  font-weight: bold;
+                  color: #007bff;
+                  text-decoration: none;
+              }
+          </style>
+      </head>
+      <body>
+          <div class="container">
+              <h1>Password Reset Request</h1>
+              <p>We received a request to reset your password for Interactive Book Reader.</p>
+              <p>If this request was not initiated by you, please ignore this email.</p>
+              <p>To reset your password, click the following link:</p>
+              <p><a class="reset-link" href="${link}">Reset Password</a></p>
+
+              <p>If the link above doesn't work, you can copy and paste the following URL into your browser:</p>
+              <p>${link}</p>
+              <p>This link will expire after a certain period of time for security reasons.</p>
+              <p>If you have any questions or need further assistance, please contact our support team.</p>
+          </div>
+      </body>
+      </html>
+      `,
+  };
+  await transporter.sendMail(mailOptions);
+};
 
 module.exports = {
   register,
@@ -534,5 +650,6 @@ module.exports = {
   getIDfromToken,
   verifyOTP,
   resendOTP,
-  forgotpassword
+  forgotpassword,
+  resetpassword,
 };

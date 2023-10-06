@@ -6,7 +6,6 @@ the `authenticate` middleware from the "../middleware/authenticate" file. */
 const AuthController = require("../controllers/AuthController");
 const authenticate = require("../middleware/authenticate");
 
-
 router.post("/register", AuthController.register);
 router.post("/login", AuthController.login);
 router.post("/update", AuthController.update);
@@ -17,5 +16,6 @@ router.post("/getIDfromToken", AuthController.getIDfromToken);
 router.post("/verifyOTP", AuthController.verifyOTP);
 router.post("/resendOTP", AuthController.resendOTP);
 router.post("/forgotPassword", AuthController.forgotpassword);
+router.post("/resetPassword", AuthController.resetpassword);
 
 module.exports = router;
