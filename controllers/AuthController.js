@@ -526,15 +526,15 @@ const forgotpassword = async (req, res) => {
     const secret_key = JWT_SECRET_KEY + oldUser.password;
     const token = jwt.sign({ username }, secret_key, { expiresIn: "5m" });
     const CLIENT_URL = `http://localhost:3000/auth/resetpassword/${oldUser._id}/${token}`;
-    await sendResetPasswordEmail(oldUser.email, CLIENT_URL);
-    console.log(CLIENT_URL);
+    sendResetPasswordEmail(oldUser.email, CLIENT_URL);
+    res.json({ message: "Password reset link has been sent to your email." });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
 const resetpassword = async (req, res) => {
-  const {id,token,password} = req.body;
+  const { id, token, password } = req.body;
   const oldUser = await Publisher.findOne({ _id: id });
   if (!oldUser) {
     return res.status(404).json({ message: "User doesn't exist." });
@@ -549,8 +549,7 @@ const resetpassword = async (req, res) => {
         res.json({
           error: err,
         });
-      }
-      else{
+      } else {
         Publisher.findOneAndUpdate(
           { _id: id },
           {
@@ -571,8 +570,7 @@ const resetpassword = async (req, res) => {
             });
           });
       }
-    }
-    );
+    });
   } catch (err) {
     res.json({ message: err.message });
   }
