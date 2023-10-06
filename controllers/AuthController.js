@@ -29,7 +29,8 @@ let transporter = nodemailer.createTransport({
  */
 const register = (req, res, next) => {
   Publisher.findOne({ username: req.body.username }).then((publisher) => {
-    if (publisher) {
+    console.log(publisher);
+    if (publisher.verified) {
       res.json({
         message: "Publisher already exists.",
       });
@@ -244,12 +245,13 @@ const getPublisher = (req, res, next) => {
     });
 };
 
+
 /**
  * The deletePublisher function deletes a publisher from the database based on the provided _id and
  * returns a success or error message.
  * @param req - The req parameter is the request object, which contains information about the HTTP
- * request made by the client. It includes properties such as the request method, request headers,
- * request body, and request parameters.
+ * request made by the client. It includes data such as the request headers, request body, request
+ * method, and request URL.
  * @param res - The `res` parameter is the response object that is used to send a response back to the
  * client. It contains methods and properties that allow you to control the response, such as `json()`
  * to send a JSON response, `send()` to send a plain text response, and `status()` to
@@ -489,7 +491,10 @@ const resendOTP = async (req, res) => {
   try {
     const { publisherId, email } = req.body;
     if (!publisherId || !email) {
-      throw new Error("Empty user details are not allowed.");
+      res.json({
+        status: "Failed",
+        message: "Invalid publisherId or email.",
+      });
     } else {
       await PublisherOTPVerification.deleteMany({ publisherId });
       sendOTPVerification({ _id: publisherId, email }, res);
