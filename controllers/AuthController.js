@@ -29,12 +29,20 @@ let transporter = nodemailer.createTransport({
  */
 const register = (req, res, next) => {
   Publisher.findOne({ username: req.body.username }).then((publisher) => {
-    console.log(publisher);
-    if (publisher.verified) {
-      res.json({
-        message: "Publisher already exists.",
-      });
-    } else {
+    let registering = false;
+    if (publisher){
+      if (publisher.verified===true){
+        res.json({
+          message: "Publisher already exists.",
+        });
+      }
+      else{
+        registering=true;
+      }
+    }else{
+      registering=true;      
+    }
+    if (registering) {
       bcrypt.hash(req.body.password, 10, function (err, hashedPass) {
         if (err) {
           res.json({
