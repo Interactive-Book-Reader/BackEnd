@@ -516,6 +516,14 @@ const resendOTP = async (req, res) => {
   }
 };
 
+const forgotpassword = async (req, res) => {
+  const {username} =req.body;
+  console.log(username);
+  res.json({
+    message: "Take the username",
+  });
+}
+
 module.exports = {
   register,
   login,
@@ -526,4 +534,5 @@ module.exports = {
   getIDfromToken,
   verifyOTP,
   resendOTP,
+  forgotpassword
 };
