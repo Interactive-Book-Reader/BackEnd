@@ -48,6 +48,7 @@ const AuthRoute = require("./routes/auth");
 const UserRoute = require("./routes/user");
 const DicRoute = require("./routes/dictionary");
 const Read_BooksRoute = require("./routes/read_books");
+const AdminRoute = require("./routes/admin");
 
 const uri = process.env.MONGODB_URI;
 mongoose.connect(uri, {
@@ -81,3 +82,4 @@ app.use("/api/publisher", AuthRoute);
 app.use("/api/user", UserRoute);
 app.use("/api/dictionary", DicRoute);
 app.use("/api/read_books", Read_BooksRoute);
+app.use("/api/admin", AdminRoute);
