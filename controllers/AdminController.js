@@ -15,7 +15,7 @@ const jwt = require("jsonwebtoken");
  * control to the next middleware function after the current middleware function has completed its
  * task.
  */
-const loginAdmin = async (req, res,next) => {
+const loginAdmin = async (req, res, next) => {
   let username = req.body.username;
   let password = req.body.password;
 
@@ -66,51 +66,61 @@ const loginAdmin = async (req, res,next) => {
  * function.
  */
 const addAdmin = async (req, res, next) => {
-    let username=req.body.username;
-    let password=req.body.password;
-    let email=req.body.email;
-    let name=req.body.name;
-    let profile_image=req.body.profile_image;
+  let username = req.body.username;
+  let password = req.body.password;
+  let email = req.body.email;
+  let name = req.body.name;
+  let profile_image = req.body.profile_image;
 
-    Admin.findOne({
-        $or: [{ username: username }],
-      }).then((admin) => {
-        if (admin) {
-            res.json({
-                message: "Admin is already exist.",
-              });
-        } else {
-            bcrypt.hash(password, 10, function (err, hash) {
-                if (err) {
-                  res.json({
-                    error: err,
-                  });
-                }
-                let admin = new Admin({
-                    username:username,
-                    password:hash,
-                    email:email,
-                    name:name,
-                    profile_image:profile_image
-                });
-                admin
-                  .save()
-                  .then(() => {
-                    res.json({
-                      message: "Admin is added successfully.",
-                    });
-                  })
-                  .catch((error) => {
-                    res.json({
-                      message: "An error is occured.",
-                    });
-                  });
-              });
-        }
+  Admin.findOne({
+    $or: [{ username: username }],
+  }).then((admin) => {
+    if (admin) {
+      res.json({
+        message: "Admin is already exist.",
       });
-}
+    } else {
+      bcrypt.hash(password, 10, function (err, hash) {
+        if (err) {
+          res.json({
+            error: err,
+          });
+        }
+        let admin = new Admin({
+          username: username,
+          password: hash,
+          email: email,
+          name: name,
+          profile_image: profile_image,
+        });
+        admin
+          .save()
+          .then(() => {
+            res.json({
+              message: "Admin is added successfully.",
+            });
+          })
+          .catch((error) => {
+            res.json({
+              message: "An error is occured.",
+            });
+          });
+      });
+    }
+  });
+};
+
+const getAdmin = async (req, res, next) => {
+  const admin = await Admin.findById(req.body.id);
+  if (!admin) {
+    res.status(500).json({ success: false });
+  } else {
+    res.status(200).json(admin);
+  }
+};
 
 module.exports = {
   loginAdmin,
-    addAdmin
+  addAdmin,
+  getAdmin,
 };
