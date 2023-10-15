@@ -26,5 +26,5 @@ jobs:
 
     - name: Deploy to Heroku
       run: |
-        git remote add heroku https://areader3d-be8a3a856279.herokuapp.com/
+        heroku git:remote -a areader3d
         git push heroku main
