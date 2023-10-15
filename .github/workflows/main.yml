@@ -26,5 +26,5 @@ jobs:
 
     - name: Deploy to Heroku
       run: |
-        git remote add heroku https://git.heroku.com/your-heroku-app.git
+        git remote add heroku https://areader3d-be8a3a856279.herokuapp.com/
         git push heroku main
