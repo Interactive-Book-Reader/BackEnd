@@ -23,8 +23,3 @@ jobs:
 
     - name: Run tests
       run: npm test
-
-    - name: Deploy to Heroku
-      run: |
-        heroku git:remote -a areader3d
-        git push heroku main 
