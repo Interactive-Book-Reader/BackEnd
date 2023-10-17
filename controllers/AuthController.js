@@ -638,6 +638,21 @@ const sendResetPasswordEmail = async (email, link) => {
   await transporter.sendMail(mailOptions);
 };
 
+const getAllPublishers = async (req, res) => {
+  try {
+    const publishers = await Publisher.find();
+    res.json({
+      message: "All publishers are fetched successfully.",
+      publishers,
+    });
+  } catch (err) {
+    res.json({
+      message: "An error is occured.",
+      error: err.message,
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -650,4 +665,5 @@ module.exports = {
   resendOTP,
   forgotpassword,
   resetpassword,
+  getAllPublishers,
 };

@@ -231,6 +231,19 @@ const deleteUser = (req, res, next) => {
     });
 };
 
+/**
+ * The function getAllUsers retrieves all users from the database and sends a JSON response with the
+ * users if successful, or an error message if there is an error.
+ * @param req - The `req` parameter represents the HTTP request object, which contains information
+ * about the incoming request such as headers, query parameters, and request body.
+ * @param res - The `res` parameter is the response object that is used to send a response back to the
+ * client. It contains methods and properties that allow you to control the response, such as `json()`
+ * to send a JSON response, `send()` to send a plain text response, and `status()` to
+ * @param next - The `next` parameter is a function that is used to pass control to the next middleware
+ * function in the request-response cycle. It is typically used when there is an error or when the
+ * current middleware function has completed its task and wants to pass control to the next middleware
+ * function.
+ */
 const getAllUsers = (req, res, next) => {
   User.find()
     .then((users) => {
