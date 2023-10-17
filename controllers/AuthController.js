@@ -638,6 +638,16 @@ const sendResetPasswordEmail = async (email, link) => {
   await transporter.sendMail(mailOptions);
 };
 
+/**
+ * The function getAllPublishers fetches all publishers and sends a response with the fetched
+ * publishers or an error message.
+ * @param req - The `req` parameter is the request object that contains information about the incoming
+ * HTTP request, such as the request headers, request parameters, and request body. It is used to
+ * retrieve data from the client-side and pass it to the server-side.
+ * @param res - The `res` parameter is the response object that is used to send the response back to
+ * the client. It contains methods and properties that allow you to control the response, such as
+ * `json()` method to send a JSON response, `send()` method to send a plain text response, `status()`
+ */
 const getAllPublishers = async (req, res) => {
   try {
     const publishers = await Publisher.find();
