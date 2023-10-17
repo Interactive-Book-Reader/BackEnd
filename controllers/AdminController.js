@@ -110,6 +110,85 @@ const addAdmin = async (req, res, next) => {
   });
 };
 
+const update = (req, res, next) => {
+  if (req.body.password !== undefined) {
+    bcrypt.hash(req.body.password, 10, function (err, hashedPass) {
+      if (err) {
+        return res.status(500).json({
+          error: err,
+        });
+      }
+      Admin.findOneAndUpdate(
+        { _id: req.body._id },
+        {
+          $set: {
+            name: req.body.name,
+            email: req.body.email,
+            phonenumber: req.body.phonenumber,
+            username: req.body.username,
+            bio_data: req.body.bio_data,
+            password: hashedPass,
+            profile_image: req.body.logo,
+          },
+        }
+      )
+        .then(() => {
+          res.json({
+            message: "Admin data is updated successfully.",
+          });
+        })
+        .catch((error) => {
+          res.status(500).json({
+            message: "An error occurred.",
+            error: error.message, // Include the error message for debugging
+          });
+        });
+    });
+  } else {
+    Admin.findOneAndUpdate(
+      { _id: req.body._id },
+      {
+        $set: {
+          name: req.body.name,
+          email: req.body.email,
+          phonenumber: req.body.phonenumber,
+          username: req.body.username,
+          bio_data: req.body.bio_data,
+          profile_image: req.body.logo,
+        },
+      }
+    )
+      .then(() => {
+        console.log("update");
+        res.json({
+          message: "Admin data is updated successfully.",
+        });
+      })
+      .catch((error) => {
+        res.status(500).json({
+          message: "An error occurred.",
+          error: error.message, // Include the error message for debugging
+        });
+      });
+  }
+};
+
+
+/**
+ * The function `getAdmin` retrieves an admin object from the database based on the provided ID and
+ * sends it as a JSON response.
+ * @param req - The `req` parameter is an object that represents the HTTP request made by the client.
+ * It contains information such as the request method, request headers, request body, request
+ * parameters, etc. In this case, `req.body.id` is used to retrieve the `id` property from the request
+ * body
+ * @param res - The `res` parameter is the response object that is used to send the response back to
+ * the client. It contains methods and properties that allow you to set the response status, headers,
+ * and body. In this code snippet, the `res` object is used to send a JSON response with either a
+ * @param next - The `next` parameter is a function that is used to pass control to the next middleware
+ * function in the request-response cycle. It is typically used when there is an error or when the
+ * current middleware function has completed its task and wants to pass control to the next middleware
+ * function.
+ */
 const getAdmin = async (req, res, next) => {
   const admin = await Admin.findById(req.body.id);
   if (!admin) {
@@ -123,4 +202,5 @@ module.exports = {
   loginAdmin,
   addAdmin,
   getAdmin,
+  update,
 };

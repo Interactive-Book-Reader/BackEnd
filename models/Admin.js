@@ -19,6 +19,12 @@ const adminSchema = new Schema(
     profile_image: {
       type: String,
     },
+    phonenumber: {
+      type: String,
+    },
+    bio_data: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
