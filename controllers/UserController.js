@@ -231,10 +231,26 @@ const deleteUser = (req, res, next) => {
     });
 };
 
+const getAllUsers = (req, res, next) => {
+  User.find()
+    .then((users) => {
+      res.json({
+        message: "Users are fetched successfully.",
+        users,
+      });
+    })
+    .catch((error) => {
+      res.json({
+        message: "An error is occured.",
+      });
+    });
+};
+
 module.exports = {
   register,
   login,
   update,
   getUser,
   deleteUser,
+  getAllUsers,
 };
