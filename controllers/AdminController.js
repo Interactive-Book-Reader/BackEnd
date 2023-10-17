@@ -46,7 +46,7 @@ const loginAdmin = async (req, res, next) => {
       });
     } else {
       res.json({
-        message: "No publisher found!",
+        message: "No Admin found!",
       });
     }
   });
