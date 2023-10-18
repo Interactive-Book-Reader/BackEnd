@@ -1,5 +1,6 @@
 const { response } = require("express");
 const Book = require("../models/Book");
+const Publisher = require("../models/Publisher");
 
 /**
  * The function retrieves all books from the database and sends a JSON response with the books or an
@@ -15,17 +16,41 @@ const Book = require("../models/Book");
  * function.
  */
 const index = (req, res, next) => {
-  Book.find()
-    .then((response) => {
-      res.json({
-        response,
-      });
-    })
-    .catch((error) => {
-      res.json({
-        message: "An error Occured!",
-      });
+  Book.aggregate([
+    {
+      $lookup: {
+        from: "publishers",  // The name of the "publishers" collection
+        localField: "publisher_id",  // The field in the "books" collection
+        foreignField: "_id",  // The field in the "publishers" collection
+        as: "publisher_details"
+      }
+    },
+    {
+      $unwind: "$publisher_details"  // Unwind the resulting array to a single object
+    },
+    {
+      $project: {
+        _id: 0,  // Exclude the _id field
+        book_details: "$$ROOT",  // Include all fields from the "books" collection
+        publisher_name: "$publisher_details.name"  // Include the publisher's name
+      }
+    }
+  ])
+  .then((data) => {
+    res.json({
+      data: data,
     });
+  })
+  .catch((error) => {
+    res.json({
+      message: "An error occurred",
+      error: error.message,
+    });
+  });
+  
+
+
+
 };
 
 /**
