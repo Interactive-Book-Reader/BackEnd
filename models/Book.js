@@ -29,7 +29,7 @@ const bookSchema = new Schema(
       type: String,
     },
     publisher_id:{
-      type: String,
+      type: mongoose.Schema.Types.ObjectId, // Change the type to ObjectId
     },
   },
   { timestamps: true }
