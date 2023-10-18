@@ -1,19 +1,18 @@
 const { response } = require("express");
 const Book = require("../models/Book");
-const Publisher = require("../models/Publisher");
+
 
 /**
- * The function retrieves all books from the database and sends a JSON response with the books or an
- * error message.
- * @param req - The `req` parameter represents the HTTP request object, which contains information
- * about the incoming request such as the request headers, request parameters, request body, etc.
- * @param res - The `res` parameter is the response object that is used to send a response back to the
- * client. It contains methods and properties that allow you to control the response, such as `json()`
- * which is used to send a JSON response.
+ * The index function performs an aggregation query in MongoDB to retrieve book details along with the
+ * corresponding publisher's name.
+ * @param req - The `req` parameter is the request object, which contains information about the
+ * incoming HTTP request such as headers, query parameters, and request body.
+ * @param res - The `res` parameter is the response object that is used to send the response back to
+ * the client. It contains methods and properties that allow you to control the response, such as
+ * `json()` to send a JSON response, `send()` to send a plain text response, and `status()` to
  * @param next - The `next` parameter is a function that is used to pass control to the next middleware
  * function in the request-response cycle. It is typically used when you want to pass control to the
- * next middleware function or route handler after completing some operations in the current middleware
- * function.
+ * next middleware function after completing some operations in the current middleware function.
  */
 const index = (req, res, next) => {
   Book.aggregate([
