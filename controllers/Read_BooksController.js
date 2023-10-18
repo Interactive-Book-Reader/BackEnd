@@ -15,57 +15,58 @@ const Read_Books = require("../models/Read_Books");
  * task.
  */
 const getdetails = (req, res, next) => {
-    Read_Books.aggregate([
-        {
-          $lookup: {
-            from: "users",
-            localField: "user_id",
-            foreignField: "_id",
-            as: "user_details"
-          }
+  Read_Books.aggregate([
+    {
+      $lookup: {
+        from: "users", // The name of the "users" collection
+        localField: "user_id", // The field in the "read_books" collection
+        foreignField: "_id", // The field in the "users" collection
+        as: "user_details"
+      }
+    },
+    {
+      $lookup: {
+        from: "books", // The name of the "books" collection
+        localField: "book_id", // The field in the "read_books" collection
+        foreignField: "_id", // The field in the "books" collection
+        as: "book_details"
+      }
+    },
+    {
+      $unwind: "$user_details" // Unwind the user_details array
+    },
+    {
+      $unwind: "$book_details" // Unwind the book_details array
+    },
+    {
+      $project: {
+        _id: 0, // Exclude the _id field from the output
+        user_details: {
+          name: 1, // Include user details you need
+          username: 1
         },
-        {
-          $lookup: {
-            from: "books",
-            localField: "book_id",
-            foreignField: "_id",
-            as: "book_details"
-          }
-        },
-        {
-          $unwind: "$user_details"
-        },
-        {
-          $unwind: "$book_details"
-        },
-        {
-          $project: {
-            _id: 0, // Exclude _id field from the output
-            user_details: {
-              name: 1, // Include user details
-              username: 1
-            },
-            book_details: {
-              title: 1, // Include book details
-              ISBN: 1,
-              genre: 1,
-              price: 1,
-              publisher_id: 1
-            }
-          }
+        book_details: {
+          title: 1, // Include book details you need
+          ISBN: 1,
+          genre: 1,
+          price: 1
         }
-      ]).then((data) => {
-        const result =[];
-        {data.map((item) => {
-            if (item.book_details.publisher_id === req.body.publisher_id){
-                result.push(item);
-            }
-        }
-        )}
-        res.json({
-            data: result,
-          });
+      }
+    }
+  ])
+    .then((result) => {
+      res.status(200).json({
+        message: "Read_Books details retrieved successfully!",
+        read_books: result
       });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: "Read_Books details retrieved failed!",
+        error: err
+      });
+    });
+  
 };
 
 /**
