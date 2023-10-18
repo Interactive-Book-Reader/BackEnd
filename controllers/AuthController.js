@@ -1,4 +1,5 @@
 const Publisher = require("../models/Publisher");
+const Book = require("../models/Book");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
@@ -252,32 +253,54 @@ const getPublisher = (req, res, next) => {
     });
 };
 
+
 /**
- * The deletePublisher function deletes a publisher from the database based on the provided _id and
- * returns a success or error message.
+ * The deletePublisher function deletes a publisher and all associated books from the database.
  * @param req - The req parameter is the request object, which contains information about the HTTP
- * request made by the client. It includes data such as the request headers, request body, request
- * method, and request URL.
- * @param res - The `res` parameter is the response object that is used to send a response back to the
- * client. It contains methods and properties that allow you to control the response, such as `json()`
- * to send a JSON response, `send()` to send a plain text response, and `status()` to
+ * request made by the client. It includes properties such as headers, query parameters, request body,
+ * and more.
+ * @param res - The `res` parameter is the response object. It is used to send the response back to the
+ * client. In this code, it is used to send JSON responses with status codes and messages.
  * @param next - The `next` parameter is a function that is used to pass control to the next middleware
- * function in the request-response cycle. It is typically used when there is an error or when the
- * current middleware function has completed its task and wants to pass control to the next middleware
- * function.
+ * function in the request-response cycle. It is typically used to handle errors or to move on to the
+ * next middleware function after completing a specific task.
+ * @returns a JSON response with the message "User and associated books deleted" if the user and
+ * associated books are successfully deleted. If there is an error, it will be passed to the error
+ * handling middleware.
  */
 const deletePublisher = (req, res, next) => {
-  Publisher.findOneAndDelete({ _id: req.body._id })
-    .then(() => {
-      res.json({
-        message: "Publisher data is deleted successfully.",
-      });
+  const userId = req.body.userId;
+
+  Publisher.findOne({ _id: userId }).
+    then((publisher) => {
+      if (!publisher) {
+        res.status(404).json({
+          message: "Publisher not found.",
+        });
+      } else {
+        Book.deleteMany({ publisher_id: userId })
+          .then(() => {
+            Publisher.deleteOne({ _id: userId })
+              .then(() => {
+                res.status(200).json({
+                  message: "User and associated books deleted",
+                });
+              })
+              .catch((error) => {
+                res.status(500).json({
+                  message: "An error occurred.",
+                  error: error.message, // Include the error message for debugging
+                });
+              });
+          })
+          .catch((error) => {
+            res.status(500).json({
+              message: "An error occurred.",
+              error: error.message, // Include the error message for debugging
+            });
+          });
+      }
     })
-    .catch(() => {
-      res.json({
-        message: "An error is occured.",
-      });
-    });
 };
 
 /**
