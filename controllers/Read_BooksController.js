@@ -43,7 +43,8 @@ const getdetails = (req, res, next) => {
         _id: 0, // Exclude the _id field from the output
         user_details: {
           name: 1, // Include user details you need
-          username: 1
+          username: 1,
+          image_link: 1
         },
         book_details: {
           title: 1, // Include book details you need
