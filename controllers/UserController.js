@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const Read_Book = require("../models/Read_Books");
 
 /**
  * The `register` function checks if a user already exists in the database, and if not, it hashes the
@@ -218,17 +219,33 @@ const getUser = (req, res, next) => {
  * function.
  */
 const deleteUser = (req, res, next) => {
-  User.findOneAndDelete({ username: req.body.username })
-    .then(() => {
-      res.json({
-        message: "User is deleted successfully.",
+  User.findOne({ _id: req.body.id }).then((user) => {
+    if (!user) {
+      res.status(404).json({
+        message: "User not found.",
       });
-    })
-    .catch((error) => {
-      res.json({
-        message: "An error is occured.",
-      });
-    });
+    } else {
+      Read_Book.deleteMany({ user_id: req.body.id })
+        .then(() => {
+          User.deleteOne({ _id: req.body.id })
+            .then(() => {
+              res.json({
+                message: "User is deleted successfully.",
+              });
+            })
+            .catch((error) => {
+              res.json({
+                message: "An error is occured.",
+              });
+            });
+        })
+        .catch((error) => {
+          res.json({
+            message: "An error is occured.",
+          });
+        });
+    }
+  });
 };
 
 /**
