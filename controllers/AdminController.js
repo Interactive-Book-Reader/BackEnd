@@ -70,7 +70,10 @@ const addAdmin = async (req, res, next) => {
   let password = req.body.password;
   let email = req.body.email;
   let name = req.body.name;
-  let profile_image = req.body.profile_image;
+  let profile_image = req.body.image;
+  let phonenumber = req.body.phonenumber;
+  let bio_data = req.body.bio_data;
+
 
   Admin.findOne({
     $or: [{ username: username }],
@@ -92,6 +95,8 @@ const addAdmin = async (req, res, next) => {
           email: email,
           name: name,
           profile_image: profile_image,
+          phonenumber: phonenumber,
+          bio_data: bio_data,
         });
         admin
           .save()
