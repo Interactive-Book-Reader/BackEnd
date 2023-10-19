@@ -537,6 +537,18 @@ const resendOTP = async (req, res) => {
   }
 };
 
+/**
+ * The `forgotpassword` function is an asynchronous function that handles the logic for generating a
+ * password reset link and sending it to the user's email.
+ * @param req - The `req` parameter is the request object that contains information about the HTTP
+ * request made by the client. It includes properties such as `body`, `params`, `query`, `headers`,
+ * etc.
+ * @param res - The `res` parameter is the response object that is used to send the response back to
+ * the client. It contains methods and properties that allow you to control the response, such as
+ * setting the status code, sending JSON data, or redirecting the client to another URL.
+ * @returns a JSON response with a message indicating that a password reset link has been sent to the
+ * user's email.
+ */
 const forgotpassword = async (req, res) => {
   const { username } = req.body;
   try {
@@ -548,7 +560,9 @@ const forgotpassword = async (req, res) => {
       "askfjjkfh98314bjbahsdfhdjfafhssdjkhfkdjhfadjshfjhfdjkfhdf381tfhjsafjsf";
     const secret_key = JWT_SECRET_KEY + oldUser.password;
     const token = jwt.sign({ username }, secret_key, { expiresIn: "5m" });
-    const CLIENT_URL = `http://localhost:3000/auth/resetpassword/${oldUser._id}/${token}`;
+    console.log(token);
+    console.log(oldUser._id);
+    const CLIENT_URL = `https://interactive-book-reader.web.app/auth/resetpassword/${oldUser._id}/${token}`;
     sendResetPasswordEmail(oldUser.email, CLIENT_URL);
     res.json({ message: "Password reset link has been sent to your email." });
   } catch (err) {
@@ -556,6 +570,20 @@ const forgotpassword = async (req, res) => {
   }
 };
 
+/**
+ * The `resetpassword` function is an asynchronous function that handles the logic for resetting a
+ * user's password in a JavaScript application.
+ * @param req - The `req` parameter is the request object that contains information about the HTTP
+ * request made by the client. It includes properties such as `body`, `params`, `query`, `headers`,
+ * etc. In this code snippet, `req.body` is used to access the request body, which typically contains
+ * @param res - The `res` parameter is the response object that is used to send the response back to
+ * the client. It contains methods and properties that allow you to control the response, such as
+ * setting the status code, sending JSON data, or redirecting the client to another URL.
+ * @returns a JSON response. If the user doesn't exist, it returns a 404 status code with a message
+ * "User doesn't exist.". If the token is verified and the password is successfully hashed and updated
+ * in the database, it returns a JSON response with a message "Password is updated successfully.". If
+ * any error occurs during the process, it returns a 500 status code with a message
+ */
 const resetpassword = async (req, res) => {
   const { id, token, password } = req.body;
   const oldUser = await Publisher.findOne({ _id: id });
@@ -600,6 +628,15 @@ const resetpassword = async (req, res) => {
   // res.send("Done");
 };
 
+/**
+ * The function `sendResetPasswordEmail` sends a password reset email to a specified email address with
+ * a reset link.
+ * @param email - The `email` parameter is the email address of the recipient to whom the password
+ * reset email will be sent.
+ * @param link - The `link` parameter is the URL that the user will click on to reset their password.
+ * It should be a unique and secure link that is generated specifically for the user requesting the
+ * password reset.
+ */
 const sendResetPasswordEmail = async (email, link) => {
   const mailOptions = {
     from: process.env.AUTH_EMAIL,
