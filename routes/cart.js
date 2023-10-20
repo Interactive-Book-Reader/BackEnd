@@ -5,7 +5,7 @@ const router = express.Router();
 "../controllers/CartController" file and assigning it to the `CartController` constant. */
 const CartController = require("../controllers/CartController");
 
-router.get("/getcart", CartController.getCart);
+router.post("/getcart", CartController.getCart);
 router.post("/addbook", CartController.addbook);
 
 module.exports = router;

@@ -1,7 +1,10 @@
 const { response } = require("express");
 const Cart = require("../models/Cart");
+const mongoose = require('mongoose');
 
 const getCart = (req, res, next) => {
+  const specificUserId = mongoose.Types.ObjectId(req.body.user_id);
+  console.log("Retrieving cart details for user:", specificUserId);
   Cart.aggregate([
     {
       $lookup: {
@@ -20,21 +23,26 @@ const getCart = (req, res, next) => {
       },
     },
     {
-      $unwind: "$user_details", // Unwind the user_details array
+      $match: {
+        user_id: specificUserId,
+      },
     },
     {
-      $unwind: "$book_details", // Unwind the book_details array
+      $unwind: "$user_details",
+    },
+    {
+      $unwind: "$book_details",
     },
     {
       $project: {
-        _id: 0, // Exclude the _id field from the output
+        _id: 0,
         user_details: {
-          name: 1, // Include user details you need
+          name: 1,
           username: 1,
           image_link: 1,
         },
         book_details: {
-          title: 1, // Include book details you need
+          title: 1,
           ISBN: 1,
           genre: 1,
           price: 1,
@@ -43,14 +51,21 @@ const getCart = (req, res, next) => {
     },
   ])
     .then((result) => {
-      res.status(200).json({
-        message: "Cart details retrieved successfully!",
-        Cart: result,
-      });
+      if (result && result.length > 0) {
+        res.status(200).json({
+          message: "Cart details retrieved successfully!",
+          Cart: result,
+        });
+      } else {
+        res.status(404).json({
+          message: "No cart details found for the specified user.",
+        });
+      }
     })
     .catch((err) => {
+      console.error("Error in cart retrieval:", err);
       res.status(500).json({
-        message: "Cart details retrieved failed!",
+        message: "Cart details retrieval failed!",
         error: err,
       });
     });
