@@ -43,9 +43,11 @@ const getCart = (req, res, next) => {
         },
         book_details: {
           title: 1,
+          author: 1,
           ISBN: 1,
           genre: 1,
           price: 1,
+          coverpage: 1,
         },
       },
     },
