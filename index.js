@@ -49,13 +49,13 @@ const UserRoute = require("./routes/user");
 const DicRoute = require("./routes/dictionary");
 const Read_BooksRoute = require("./routes/read_books");
 const AdminRoute = require("./routes/admin");
+const CartRoute = require("./routes/cart");
 
 const uri = process.env.MONGODB_URI;
 mongoose.connect(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
 
 const db = mongoose.connection;
 app.use(cors({ origin: true, credentials: true }));
@@ -82,4 +82,5 @@ app.use("/api/publisher", AuthRoute);
 app.use("/api/user", UserRoute);
 app.use("/api/dictionary", DicRoute);
 app.use("/api/read_books", Read_BooksRoute);
+app.use("/api/cart", CartRoute);
 app.use("/api/admin", AdminRoute);
