@@ -62,13 +62,28 @@ const addbook = (req, res, next) => {
     user_id: req.body.user_id,
     book_id: req.body.book_id,
   });
-  cart
-    .save()
+  Cart.findOne({ user_id: req.body.user_id, book_id: req.body.book_id })
     .then((result) => {
-      res.status(201).json({
-        message: "book is added successfully.",
-        result: result,
-      });
+      if (result) {
+        res.status(200).json({
+          message: "Book already added to cart",
+        });
+      } else {
+        cart
+          .save()
+          .then((result) => {
+            res.status(201).json({
+              message: "book is added successfully.",
+              result: result,
+            });
+          })
+          .catch((err) => {
+            res.status(500).json({
+              message: "Cart added failed",
+              error: err,
+            });
+          });
+      }
     })
     .catch((err) => {
       res.status(500).json({
