@@ -1,3 +1,4 @@
+const { response } = require("express");
 const Cart = require("../models/Cart");
 
 const getCart = (req, res, next) => {
@@ -56,14 +57,16 @@ const getCart = (req, res, next) => {
 };
 
 const addbook = (req, res, next) => {
-  const Cart = new Cart({
+  console.log("Adding Cart");
+  const cart = new Cart({
     user_id: req.body.user_id,
     book_id: req.body.book_id,
   });
-  Cart.save()
+  cart
+    .save()
     .then((result) => {
       res.status(201).json({
-        message: "Cart added successfully",
+        message: "book is added successfully.",
         result: result,
       });
     })
