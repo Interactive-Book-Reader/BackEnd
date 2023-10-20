@@ -48,6 +48,7 @@ const getFavorite = (req, res, next) => {
           genre: 1,
           price: 1,
           coverpage: 1,
+          pdf: 1,
         },
       },
     },
