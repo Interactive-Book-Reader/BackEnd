@@ -42,6 +42,7 @@ const getFavorite = (req, res, next) => {
           image_link: 1,
         },
         book_details: {
+          _id: 1,
           title: 1,
           author: 1,
           ISBN: 1,
@@ -111,7 +112,32 @@ const addbook = (req, res, next) => {
     });
 };
 
+const deletebook = (req, res, next) => {
+  console.log("Deleting Favorite");
+  const user_id = req.body.user_id;
+  const book_id = req.body.book_id;
+  Favorite.deleteOne({ user_id: user_id, book_id: book_id })
+    .then((result) => {
+      if (result) {
+        res.status(200).json({
+          message: "Book deleted from favorite",
+        });
+      } else {
+        res.status(404).json({
+          message: "Book not found in favorite",
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: "Book deletion failed",
+        error: err,
+      });
+    });
+}
+
 module.exports = {
   getFavorite,
   addbook,
+  deletebook,
 };

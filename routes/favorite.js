@@ -7,5 +7,6 @@ const FavoriteController = require("../controllers/FavoriteController");
 
 router.post("/getfavorite", FavoriteController.getFavorite);
 router.post("/addbook", FavoriteController.addbook);
+router.post("/deletebook", FavoriteController.deletebook);
 
 module.exports = router;

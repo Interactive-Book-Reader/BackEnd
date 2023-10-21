@@ -42,6 +42,7 @@ const getCart = (req, res, next) => {
           image_link: 1,
         },
         book_details: {
+          _id: 1,
           title: 1,
           author: 1,
           ISBN: 1,
@@ -111,7 +112,31 @@ const addbook = (req, res, next) => {
     });
 };
 
+const deletebook = (req, res, next) => {
+  console.log("Deleting Cart");
+  Cart.deleteOne({ user_id: req.body.user_id, book_id: req.body.book_id })
+    .then((result) => {
+      if (result.deletedCount > 0) {
+        res.status(200).json({
+          message: "Book removed from cart successfully!",
+        });
+      } else {
+        res.status(404).json({
+          message: "No cart details found for the specified user.",
+        });
+      }
+    })
+    .catch((err) => {
+      console.error("Error in cart deletion:", err);
+      res.status(500).json({
+        message: "Cart deletion failed!",
+        error: err,
+      });
+    });
+};
+
 module.exports = {
   getCart,
   addbook,
+  deletebook,
 };
