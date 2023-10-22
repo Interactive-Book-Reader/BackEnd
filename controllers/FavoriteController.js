@@ -134,10 +134,60 @@ const deletebook = (req, res, next) => {
         error: err,
       });
     });
+};
+
+const getBooksForUser = (req, res, next) => {
+  const specificUserId = mongoose.Types.ObjectId(req.body.user_id);
+  console.log("Retrieving favorite details for user:", specificUserId);
+  Favorite.find({ user_id: specificUserId })
+    .then((result) => {
+      if (result && result.length > 0) {
+        res.status(200).json({
+          message: "Favorite details retrieved successfully!",
+          Favorite: result,
+        });
+      } else {
+        res.status(404).json({
+          message: "No favorite details found for the specified user.",
+        });
+      }
+    })
+    .catch((err) => {
+      console.error("Error in favorite retrieval:", err);
+      res.status(500).json({
+        message: "Favorite details retrieval failed!",
+        error: err,
+      });
+    });
+};
+
+const checkBookForUser = (req, res, next) => {
+  const user_id = mongoose.Types.ObjectId(req.body.user_id);
+  const book_id = mongoose.Types.ObjectId(req.body.book_id);
+  Favorite.findOne({ user_id: user_id, book_id: book_id })
+    .then((result) => {
+      if (result) {
+        res.status(200).json({
+          message: "Book already added to favorite",
+        });
+      } else {
+        res.status(404).json({
+          message: "Book not found in favorite",
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: "Book check failed",
+        error: err,
+      });
+    });
 }
 
 module.exports = {
   getFavorite,
   addbook,
   deletebook,
+  getBooksForUser,
+  checkBookForUser,
 };

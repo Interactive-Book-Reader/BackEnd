@@ -1,6 +1,6 @@
 const { response } = require("express");
 const Cart = require("../models/Cart");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const getCart = (req, res, next) => {
   const specificUserId = mongoose.Types.ObjectId(req.body.user_id);
@@ -135,8 +135,60 @@ const deletebook = (req, res, next) => {
     });
 };
 
+const getBooksForUser = (req, res, next) => {
+  const specificUserId = mongoose.Types.ObjectId(req.body.user_id);
+  console.log("Retrieving cart details for user:", specificUserId);
+  Cart.find({ user_id: specificUserId })
+    .then((result) => {
+      if (result && result.length > 0) {
+        res.status(200).json({
+          message: "Cart details retrieved successfully!",
+          Cart: result,
+        });
+      } else {
+        res.status(404).json({
+          message: "No cart details found for the specified user.",
+        });
+      }
+    })
+    .catch((err) => {
+      console.error("Error in cart retrieval:", err);
+      res.status(500).json({
+        message: "Cart details retrieval failed!",
+        error: err,
+      });
+    });
+};
+
+const checkBookForUser = (req, res, next) => {
+  const specificUserId = mongoose.Types.ObjectId(req.body.user_id);
+  const specificBookId = mongoose.Types.ObjectId(req.body.book_id);
+  console.log("Retrieving cart details for user:", specificUserId);
+  Cart.find({ user_id: specificUserId, book_id: specificBookId })
+    .then((result) => {
+      if (result && result.length > 0) {
+        res.status(200).json({
+          message: "Book already added to Cart!",
+        });
+      } else {
+        res.status(404).json({
+          message: "No cart details found for the specified user.",
+        });
+      }
+    })
+    .catch((err) => {
+      console.error("Error in cart retrieval:", err);
+      res.status(500).json({
+        message: "Cart details retrieval failed!",
+        error: err,
+      });
+    });
+};
+
 module.exports = {
   getCart,
   addbook,
   deletebook,
+  getBooksForUser,
+  checkBookForUser,
 };

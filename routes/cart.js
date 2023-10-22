@@ -8,5 +8,7 @@ const CartController = require("../controllers/CartController");
 router.post("/getcart", CartController.getCart);
 router.post("/addbook", CartController.addbook);
 router.post("/deletebook", CartController.deletebook);
+router.post("/getbooksforuser", CartController.getBooksForUser);
+router.post("/checkbookforuser", CartController.checkBookForUser);
 
 module.exports = router;
